@@ -1,25 +1,24 @@
 import { useState, CSSProperties } from "react";
 import background from "./assets/images/background.png";
 import logo from "./assets/images/kain-ta-Logo.png";
-import {
-  borderBottom,
-  borderRadius,
-  display,
-  height,
-  maxHeight,
-  minHeight,
-  width,
-} from "@mui/system";
 import Button from "@mui/material/Button";
+import Modal from "./components/users_modal";
+import TextField from '@mui/material/TextField';
 
 import './dashboard.css'
 
+enum DashboardState {
+  Idle, IsAdding, IsEditting, IsDeleting, IsSaving
+}
+
+enum Tab {
+  Users,
+  Establishments,
+  Food,
+}
+
 function Dashboard() {
-  enum Tab {
-    Users,
-    Establishments,
-    Food,
-  }
+  const [state, setState] = useState<DashboardState>(DashboardState.Idle);
 
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
 
@@ -77,15 +76,41 @@ function Dashboard() {
     >
       Food
     </Button>,
-    <Button
-      style={{ ...styles.tab_button, background: "#2673DD", color: "white" }}
+    <Button style={{ ...styles.tab_button, background: "#2673DD", color: "white" }}
+      onClick={() => setState(DashboardState.IsAdding)}
     >
       add
     </Button>,
   ];
 
+  const user_inputs = [
+    <div style={styles.section}>
+      <TextField style={styles.text_input} id="text_input" label="ID" variant="standard" disabled />
+    </div>,
+    <div style={styles.section}>
+      <TextField style={styles.text_input} id="text_input" label="Name" variant="standard" />
+    </div>,
+    <div style={styles.section}>
+      <TextField style={styles.text_input} id="text_input" label="Avatar" variant="standard" />
+    </div>,
+    <div style={styles.section}>
+      <TextField style={styles.text_input} id="text_input" label="Type" variant="standard" />
+    </div>,
+    <div style={styles.section}>
+      <TextField style={styles.text_input} id="text_input" label="Owned" variant="standard" />
+    </div>,
+  ]
+
   return (
     <div style={styles.background}>
+      {state === DashboardState.IsAdding ? (
+        <Modal 
+          header="ADD USER" 
+          content={(user_inputs)}
+          onSubmit={() => setState(DashboardState.IsSaving)}
+          onCancel={() => setState(DashboardState.Idle)}
+          />
+      ) : []}
       <div style={styles.modal}>
         <div style={styles.container}>
           <div style={styles.sidebar}>
