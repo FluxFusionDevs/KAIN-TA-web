@@ -10,6 +10,7 @@ import './dashboard.css'
 import { ThumbDown } from "@mui/icons-material";
 
 import VerificationPage from "./pages/verificationPage";
+import AccountsPage from "./pages/accountsPage";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -163,8 +164,13 @@ function Dashboard() {
             <div style={{ ...styles.header, ...{ textAlign: "center" } }}>
               KAIN-TA SUPER ADMIN DASHBOARD
             </div>
+
             {selectedSidebarTab === SidebarTab.Verification ? (
               <VerificationPage />
+            ) : (null)}
+
+            {selectedSidebarTab === SidebarTab.Accounts ? (
+              <AccountsPage />
             ) : (null)}
           </div>
         </div>
