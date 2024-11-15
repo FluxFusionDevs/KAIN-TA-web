@@ -11,6 +11,7 @@ import { ThumbDown } from "@mui/icons-material";
 
 import VerificationPage from "./pages/verificationPage";
 import AccountsPage from "./pages/accountsPage";
+import DashboardPage from "./pages/dashboardPage";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -171,6 +172,10 @@ function Dashboard() {
 
             {selectedSidebarTab === SidebarTab.Accounts ? (
               <AccountsPage />
+            ) : (null)}
+
+            {selectedSidebarTab === SidebarTab.Dashboard ? (
+              <DashboardPage />
             ) : (null)}
           </div>
         </div>
