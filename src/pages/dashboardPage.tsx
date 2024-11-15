@@ -34,6 +34,31 @@ function DashboardPage() {
         width="100%"
         height="400px"
         legendToggle />
+
+      <Chart
+        chartType="Bar"
+        data={[
+          ["Day", "Subscribers"],
+          [1, 3],
+          [2, 7],
+          [3, 1],
+          [4, 11],
+          [6, 3],
+          [7, 8],
+          [8, 3],
+          [9, 11],
+          [10, 4],
+          [11, 3],
+          [12, 16],
+          [13, 11],
+          [14, 25],
+          [15, 20],
+          [16, 19],
+          [17, 23],
+        ]}
+        width="100%"
+        height="400px"
+        legendToggle />
     </div>
   );
 }
