@@ -1,7 +1,6 @@
 .content {
     width: 100%;
     flex: 1;
-    overflow: auto;
 }
 
 .table {
@@ -35,13 +34,6 @@
     display: flex;
 }
 
-/* Styles for tablets (screens wider than 600px) */
-@media (max-width: 1000px) {
-    .container {
-        top: 40px; bottom: 40px; right: 0px; left: 0px;
-    }
-}
-
 .table .row > * {
     flex: 1
 }
@@ -65,7 +57,7 @@
 }
 
 .table .odd-row {
-    border-radius: 25;
+    border-radius: 25px;
     background-color: transparent;
 }
 
@@ -77,10 +69,17 @@
     padding-bottom: 10px;
 }
 
-/* .row .action-buttons {
-    display: none
-}
+/* Styles for tablets (screens wider than 600px) */
+@media screen and (max-width: 1500px) {
+    .container {
+        top: 40px; bottom: 40px; right: 0px; left: 0px;
+    }
 
-.row:selected .action-buttons {
-    display: block
-} */
+    .table .row > * {
+        flex: default
+    }
+
+    .table {
+        width: 170%;
+    }
+  }

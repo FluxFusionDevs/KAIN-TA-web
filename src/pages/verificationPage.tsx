@@ -28,11 +28,8 @@ function VerificationPage() {
   };
 
   return (
-    <div className="table">
-            <div style={{ ...styles.header, ...{ textAlign: "center" } }}>
-              KAIN-TA SUPER ADMIN DASHBOARD
-            </div>
-
+    <div className="verification-wrapper">
+      <div className="table">
             <div className="content">
               <div className="header row row-header">
                 <div style={{ width: "100%" }}>Name</div>
@@ -40,6 +37,10 @@ function VerificationPage() {
                 <div style={{ width: "100%" }}>Profile Image</div>
                 <div style={{ width: "100%" }}>Price</div>
                 <div style={{ width: "100%" }}>Documents</div>
+                <div style={{ width: "100%" }}>Establishment Name</div>
+                <div style={{ width: "100%" }}>Menu</div>
+                <div style={{ width: "100%" }}>Location</div>
+                <div style={{ width: "100%" }}>Address</div>
                 <div style={{ width: "100%" }}>Action</div>
               </div>
               {
@@ -47,6 +48,10 @@ function VerificationPage() {
                   const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
 
                   return (<div className={class_name} onClick={() => setSelectedRow(rowIndex)}>
+                    <div>ROW</div>
+                    <div>ROW</div>
+                    <div>ROW</div>
+                    <div>ROW</div>
                     <div>ROW</div>
                     <div>ROW</div>
                     <div>ROW</div>
@@ -84,7 +89,8 @@ function VerificationPage() {
                 })
               }
             </div>
-          </div>
+      </div>
+    </div>
   );
 }
 

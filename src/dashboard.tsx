@@ -158,8 +158,14 @@ function Dashboard() {
             width: "100%",
             paddingLeft: 35,
             paddingRight: 35,
+            overflow: "auto",
           }}>
-            <VerificationPage />
+            <div style={{ ...styles.header, ...{ textAlign: "center" } }}>
+              KAIN-TA SUPER ADMIN DASHBOARD
+            </div>
+            {selectedSidebarTab === SidebarTab.Verification ? (
+              <VerificationPage />
+            ) : (null)}
           </div>
         </div>
       </div>
@@ -176,6 +182,10 @@ const styles = {
     width: "100vw",
     height: "100vh",
     color: "black",
+  },
+  header: {
+    fontWeight: "bold",
+    fontSize: 36,
   },
   modal: {
     display: "flex",
