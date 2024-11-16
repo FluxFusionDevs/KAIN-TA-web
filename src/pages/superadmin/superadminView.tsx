@@ -1,17 +1,15 @@
 import { useState, CSSProperties } from "react";
-import background from "./assets/images/background.png";
-import logo from "./assets/images/kain-ta-Logo.png";
-import Modal from "./components/users_modal";
+import background from "../../assets/images/background.png";
+import logo from "../../assets/images/kain-ta-Logo.png";
+import Modal from "../../components/users_modal";
 import TextField from '@mui/material/TextField';
 import { Button } from "@mui/material";
-import ThumbUp from "@mui/icons-material/ThumbUp";
 
-import './dashboard.css'
-import { ThumbDown } from "@mui/icons-material";
+import './superadminView.css'
 
-import VerificationPage from "./pages/verificationPage";
-import AccountsPage from "./pages/accountsPage";
-import DashboardPage from "./pages/dashboardPage";
+import VerificationPage from "./verificationPage";
+import AccountsPage from "./accountsPage";
+import DashboardPage from "./dashboardPage";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -29,7 +27,7 @@ enum SidebarTab {
   Dashboard,
 }
 
-function Dashboard() {
+function SuperadminView() {
   const [state, setState] = useState<DashboardState>(DashboardState.Idle);
 
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
@@ -229,4 +227,4 @@ const styles = {
   },
 };
 
-export default Dashboard;
+export default SuperadminView;

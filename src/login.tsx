@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { Button, TextField, IconButton } from '@mui/material';
 import background from './assets/images/background.png'
+import { Apple, Delete, Google } from '@mui/icons-material';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -27,12 +27,23 @@ function Login() {
             <TextField style={styles.text_input} id="text_input" label="Email" variant="standard" />
           </div>
           <div style={styles.section}>
-            <TextField style={styles.text_input} id="text_input" label="Password" variant="standard" />
+            <TextField style={styles.text_input} id="text_input" label="Password" variant="standard"  type='password'/>
           </div>
           <div style={{...styles.section, ...{marginTop: 25}}}>
             <Button variant="contained" style={styles.button} onClick={handleLogin}>
                 LOGIN
             </Button>
+          </div>
+
+          <div style={{...styles.section, ...{marginTop: 25}}}>
+            <div style={{padding: 10}} >or Login with</div>
+            {/* <IconButton style={{marginRight: 5}} className="alt-buttons" aria-label="apple">
+              <Apple fontSize="large" />
+            </IconButton>
+
+            <IconButton style={{marginLeft: 5}} className="alt-buttons" aria-label="google">
+              <Google fontSize="large" />
+            </IconButton> */}
           </div>
         </div>
       </div>
@@ -61,9 +72,9 @@ const styles = {
       borderRadius: '18px',
       margin: "auto",
       padding: 35,
+      paddingBottom: 15,
       display: 'inline-block',
       width: 260,
-      textAlign: "center"
     },
     section: {
       marginTop: 5
