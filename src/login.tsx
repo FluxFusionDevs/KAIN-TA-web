@@ -10,7 +10,7 @@ function Login() {
     const [count, setCount] = useState(0)
 
     const handleLogin = () => {
-        navigate('/dashboard'); 
+        navigate('/superadmin'); 
     }
 
   return (
