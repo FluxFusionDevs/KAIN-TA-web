@@ -16,7 +16,7 @@ function Login() {
   return (
     <div style={styles.background}>
       <div style={styles.modal}>
-        <div style={styles.container}>
+        <div style={{...styles.container, ...{textAlign: 'center'}}}>
           <div style={styles.header}>
             KAIN-TA
           </div>
@@ -36,8 +36,8 @@ function Login() {
           </div>
 
           <div style={{...styles.section, ...{marginTop: 25}}}>
-            <div style={{padding: 10}} >or Login with</div>
-            {/* <IconButton style={{marginRight: 5}} className="alt-buttons" aria-label="apple">
+            {/* <div style={{padding: 10}} >or Login with</div>
+            <IconButton style={{marginRight: 5}} className="alt-buttons" aria-label="apple">
               <Apple fontSize="large" />
             </IconButton>
 
