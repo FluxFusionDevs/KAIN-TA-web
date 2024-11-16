@@ -1,3 +1,27 @@
-.wrapper {
-    
+.wrapper .table .user-row {
+    flex: 1;
+}
+
+.wrapper .table .comment-row {
+    flex: 4;
+    max-height: inherit;
+}
+
+.wrapper .table .rating-row {
+    flex: 1;
+}
+
+.wrapper .table .row {
+    max-height: 45px;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.wrapper .table .row.selected-row {
+    max-height: 100px;
+    height: 100px;
+}
+
+.wrapper .table .row.selected-row .comment-row {
+    overflow: auto;
 }
