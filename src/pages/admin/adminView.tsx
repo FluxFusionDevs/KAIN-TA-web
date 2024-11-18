@@ -5,7 +5,9 @@ import Modal from "../../components/users_modal";
 import TextField from '@mui/material/TextField';
 import { Button } from "@mui/material";
 
+import MenuPage from "./menuPage";
 import './adminView.css'
+import FeedbackView from "./feedbackView";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -55,14 +57,6 @@ function AdminView() {
 
   return (
     <div style={styles.background}>
-      {state === DashboardState.IsAdding ? (
-        <Modal 
-          header="ADD USER" 
-          content={(user_inputs)}
-          onSubmit={() => setState(DashboardState.IsSaving)}
-          onCancel={() => setState(DashboardState.Idle)}
-          />
-      ) : []}
       <div style={styles.modal}>
         <div className="container">
           <div style={styles.sidebar}>
@@ -85,6 +79,13 @@ function AdminView() {
             paddingRight: 35,
             overflow: "auto",
           }}>
+            {selectedTab === Tab.Menu && (
+              <MenuPage />
+            )}
+
+            {selectedTab === Tab.Feedbacks && (
+              <FeedbackView />
+            )}
           </div>
         </div>
       </div>

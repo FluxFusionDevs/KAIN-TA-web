@@ -11,10 +11,6 @@ import VerificationPage from "./verificationPage";
 import AccountsPage from "./accountsPage";
 import DashboardPage from "./dashboardPage";
 
-enum DashboardState {
-  Idle, IsAdding, IsEditting, IsDeleting, IsSaving
-}
-
 enum Tab {
   Users,
   Establishments,
@@ -28,8 +24,6 @@ enum SidebarTab {
 }
 
 function SuperadminView() {
-  const [state, setState] = useState<DashboardState>(DashboardState.Idle);
-
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const [selectedSidebarTab, setSelectedSidebarTab] = useState<SidebarTab>(SidebarTab.Verification);
@@ -55,89 +49,8 @@ function SuperadminView() {
     }}>Dashboard</Button>,
   ];
 
-  const mstyles = {
-    button: {
-      outline: "none",
-      "&:focus": {
-        outline: "none",
-        boxShadow: "none", // Removes focus ring shadow
-      },
-      borderBottom:
-        selectedTab === Tab.Establishments ? "2px solid black" : "none",
-    },
-  };
-
-  const tab_buttons = [
-    <Button
-      style={{ ...styles.tab_button }}
-      sx={{
-        outline: "none",
-        "&:focus": {
-          outline: "none",
-          boxShadow: "none", // Removes focus ring shadow
-        },
-        borderBottom: selectedTab === Tab.Users ? "2px solid black" : "none",
-      }}
-      onClick={() => setSelectedTab(Tab.Users)}
-    >
-      Users
-    </Button>,
-    <Button
-      style={{ ...styles.tab_button }}
-      sx={mstyles.button}
-      onClick={() => setSelectedTab(Tab.Establishments)}
-    >
-      Establishments
-    </Button>,
-    <Button
-      style={{ ...styles.tab_button }}
-      sx={{
-        outline: "none",
-        "&:focus": {
-          outline: "none",
-          boxShadow: "none", // Removes focus ring shadow
-        },
-        borderBottom: selectedTab === Tab.Food ? "2px solid black" : "none",
-      }}
-      onClick={() => setSelectedTab(Tab.Food)}
-    >
-      Food
-    </Button>,
-    <Button style={{ ...styles.tab_button, background: "#2673DD", color: "white" }}
-      onClick={() => setState(DashboardState.IsAdding)}
-    >
-      add
-    </Button>,
-  ];
-
-  const user_inputs = [
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="ID" variant="standard" disabled />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Name" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Avatar" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Type" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Owned" variant="standard" />
-    </div>,
-  ]
-
   return (
     <div style={styles.background}>
-      {state === DashboardState.IsAdding ? (
-        <Modal 
-          header="ADD USER" 
-          content={(user_inputs)}
-          onSubmit={() => setState(DashboardState.IsSaving)}
-          onCancel={() => setState(DashboardState.Idle)}
-          />
-      ) : []}
       <div style={styles.modal}>
         <div className="container">
           <div style={styles.sidebar}>
