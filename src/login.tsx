@@ -2,15 +2,25 @@ import { useState } from 'react'
 import { Button, TextField, IconButton } from '@mui/material';
 import background from './assets/images/background.png'
 import { Apple, Delete, Google } from '@mui/icons-material';
-
 import { useNavigate } from 'react-router-dom';
+import { loginWithEmail } from './handlers/APIController';
+import { UserPayload, UserType } from './models/userModel';
 
 function Login() {
     const navigate = useNavigate();
     const [count, setCount] = useState(0)
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const handleLogin = () => {
-        navigate('/superadmin'); 
+    const handleLogin = async () => {
+      const data: UserPayload = await loginWithEmail(email, password);
+      
+      console.log(data.user.type);
+      if (data.user.type === "OWNER") {
+        navigate('/admin');
+      } else if (data.user.type === "ADMIN") {
+        navigate('/superadmin');
+      }
     }
 
   return (
@@ -24,10 +34,16 @@ function Login() {
             Super Admin Login
           </div>
           <div style={styles.section}>
-            <TextField style={styles.text_input} id="text_input" label="Email" variant="standard" />
+            <TextField 
+              value={email}
+              onChange={event => setEmail(event.target.value)}
+              style={styles.text_input} id="text_input" label="Email" variant="standard" />
           </div>
           <div style={styles.section}>
-            <TextField style={styles.text_input} id="text_input" label="Password" variant="standard"  type='password'/>
+            <TextField 
+              value={password}
+              onChange={event => setPassword(event.target.value)}
+              style={styles.text_input} id="text_input" label="Password" variant="standard"  type='password'/>
           </div>
           <div style={{...styles.section, ...{marginTop: 25}}}>
             <Button variant="contained" style={styles.button} onClick={handleLogin}>
