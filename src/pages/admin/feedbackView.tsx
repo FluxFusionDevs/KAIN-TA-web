@@ -1,13 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { ThumbUp, ThumbDown } from "@mui/icons-material";
 
 import Modal from "../../components/Modal";
 
 import './feedbackView.css'
+import { EstablishmentModel, Rating } from "../../models/establishmentModel";
+import { getEstablishment } from "../../handlers/APIController";
+import { UserModel } from "../../models/userModel";
 
 function FeedbackView() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
+  const [establishment, setEstablishment] = useState<EstablishmentModel>();
+
+  function UpdateRows(ratings: Rating[]): JSX.Element[] {
+    const rows: JSX.Element[] = [];
+    ratings.forEach((item, rowIndex) => {
+      const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
+      rows.push(<div key={item._id} className={`${class_name} ${selectedRow === rowIndex ? "selected-row" : ""}`} onClick={() => setSelectedRow(rowIndex)}>
+        <div className="user-row">{item.user_id.name}</div>
+        <div className="comment-row">{item.comment}</div>
+        <div className="rating-row">{item.rating}/5</div>
+      </div>);
+    })
+
+    return rows;
+  }
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      const user = sessionStorage.getItem("user");
+      if (user === undefined || user === null) 
+        return console.warn("User Tokens not Initialized");
+
+      const user_parsed: UserModel = JSON.parse(user) as UserModel;
+      console.log(user_parsed);
+
+      if (user_parsed === null || user_parsed === undefined) return;
+
+      try {
+        const user_parsed: UserModel = JSON.parse(user) as UserModel;
+      
+        if (!user_parsed || !user_parsed.owned_establishment) {
+          console.warn("Owned establishment is not available");
+          return;
+        }
+
+        // Now we can safely pass the owned_establishment to getEstablishment
+        const establishment = await getEstablishment(user_parsed.owned_establishment);      
+        setEstablishment(establishment);
+      } catch (error) {
+        console.error("Error parsing user:", error);
+      }
+    }
+
+    fetchEstablishment();
+  }, [])
 
   return (
     <div className="wrapper">
@@ -18,17 +66,9 @@ function FeedbackView() {
                 <div className="comment-row">Comment</div>
                 <div className="rating-row">Rating</div>
               </div>
-              {
-                Array.from({length: 30}).map((_, rowIndex) => {
-                  const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
-
-                  return (<div className={`${class_name} ${selectedRow === rowIndex ? "selected-row" : ""}`} onClick={() => setSelectedRow(rowIndex)}>
-                    <div className="user-row">ROW</div>
-                    <div className="comment-row">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum incidunt expedita voluptas sit quaerat reiciendis odio nam? Amet eum tempore modi earum molestias quasi ullam culpa dolor illo nihil. Maxime perspiciatis eius, odio natus a cupiditate autem enim fugit. Magni quis quibusdam a, quia, pariatur, vitae aperiam cumque sit consectetur blanditiis sed explicabo sint doloribus quasi earum dolores libero adipisci unde magnam! Voluptates deleniti incidunt voluptate perspiciatis assumenda. Alias illum magnam fugiat debitis consequatur adipisci dolores voluptatibus eveniet omnis, nesciunt maiores maxime sequi praesentium labore, dolorum a. Autem distinctio quae delectus asperiores dolore aut facilis inventore tempora possimus, libero nostrum!</div>
-                    <div className="rating-row">ROW</div>
-                  </div>)
-                })
-              }
+              { establishment === undefined ? 
+                null : 
+                UpdateRows(establishment.ratings)}
             </div>
       </div>
     </div>

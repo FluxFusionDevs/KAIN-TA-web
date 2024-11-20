@@ -1,4 +1,5 @@
 import { Food } from "./foodModel";
+import { UserModel } from "./userModel";
 
 export type EstablishmentStatus = "PENDING" | "APPROVED" | "REJECTED";
 export type LocationType = "Point";
@@ -11,7 +12,7 @@ export type Location = {
 
 export type Rating = {
     _id: string;
-    user_id: string;
+    user_id: UserModel;
     establishment_id: string;
     rating: number;
     comment: string;
