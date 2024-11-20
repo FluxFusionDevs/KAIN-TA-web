@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import "./users_modal.css";
+import "./Modal.css";
 
 import React from "react";
 

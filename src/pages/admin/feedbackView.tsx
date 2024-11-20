@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import { ThumbUp, ThumbDown } from "@mui/icons-material";
 
-import Modal from "../../components/users_modal";
+import Modal from "../../components/Modal";
 
 import './feedbackView.css'
 

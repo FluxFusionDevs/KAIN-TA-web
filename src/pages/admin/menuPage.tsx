@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 
-import Modal from "../../components/users_modal";
+import Modal from "../../components/Modal";
 
 import './menuPage.css'
 

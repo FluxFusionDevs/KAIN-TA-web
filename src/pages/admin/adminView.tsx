@@ -1,7 +1,7 @@
 import { useState, CSSProperties } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
-import Modal from "../../components/users_modal";
+import Modal from "../../components/Modal";
 import TextField from '@mui/material/TextField';
 import { Button } from "@mui/material";
 
