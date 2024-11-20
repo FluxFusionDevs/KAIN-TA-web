@@ -35,9 +35,9 @@ function DashboardPage() {
     console.log(newFood);
     if (establishment !== null && establishment !== undefined) {
       try {
-        await addFood(newFood, establishment._id);
+        const new_esta = await addFood(newFood, establishment._id);
+        setEstablishment(new_esta);
       } catch (err) {
-        console.log(err);
       }
     }
   }
