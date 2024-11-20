@@ -15,7 +15,8 @@ function Login() {
     const handleLogin = async () => {
       const data: UserPayload = await loginWithEmail(email, password);
       
-      console.log(data.user.type);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
+
       if (data.user.type === "OWNER") {
         navigate('/admin');
       } else if (data.user.type === "ADMIN") {

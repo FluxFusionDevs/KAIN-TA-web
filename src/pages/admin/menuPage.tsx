@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { ComponentType, ReactText, useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { ThumbDown, ThumbUp } from "@mui/icons-material";
+import { Delete, DoNotStepOutlined, Edit } from "@mui/icons-material";
 
 import Modal from "../../components/Modal";
 
 import './menuPage.css'
+import { Food } from "../../models/foodModel";
+import { EstablishmentModel } from "../../models/establishmentModel";
+import { getEstablishment } from "../../handlers/APIController";
+import { UserModel } from "../../models/userModel";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -13,6 +17,7 @@ enum DashboardState {
 function DashboardPage() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const [state, setState] = useState<DashboardState>(DashboardState.Idle);
+  const [establishment, setEstablishment] = useState<EstablishmentModel>();
     
   const user_inputs = [
     <div style={styles.section}>
@@ -32,6 +37,89 @@ function DashboardPage() {
     </div>,
   ]
 
+  function UpdateRows(menu: Food[]):JSX.Element[] {
+    const rows: JSX.Element[] = [];
+    menu.forEach((item, rowIndex) => {
+      const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
+      rows.push(
+        <div
+          key={item._id}
+          className={class_name}
+          onClick={() => setSelectedRow(rowIndex)}
+        >
+          <div>{item.name}</div>
+          <div>{item.description}</div>
+          <div>{item.tags.join(", ")}</div>
+          <div>
+            <a href={`${import.meta.env.VITE_API_URL}${item.image}`} target="_blank">Click to View</a>
+          </div>
+          <div>{item.price}</div>
+          <div>
+            {selectedRow === rowIndex ? (
+              <div className="action-buttons">
+                <div className="reject-button">
+                  <Button
+                    sx={{
+                      backgroundColor: "#dc3545",
+                    }}
+                    className="button"
+                    variant="contained"
+                    startIcon={<Delete />}
+                  >
+                    Delete
+                  </Button>
+                </div>
+                <div className="approve-button">
+                  <Button
+                    sx={{
+                      backgroundColor: "#28a745",
+                    }}
+                    className="button"
+                    variant="contained"
+                    startIcon={<Edit />}
+                  >
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )
+    });
+
+    return rows;
+  }
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      const user = sessionStorage.getItem("user");
+      if (user === undefined || user === null) 
+        return console.warn("User Tokens not Initialized");
+
+      const user_parsed: UserModel = JSON.parse(user) as UserModel;
+      console.log(user_parsed);
+
+      if (user_parsed === null || user_parsed === undefined) return;
+
+      try {
+        const user_parsed: UserModel = JSON.parse(user) as UserModel;
+      
+        if (!user_parsed || !user_parsed.owned_establishment) {
+          console.warn("Owned establishment is not available");
+          return;
+        }
+
+        // Now we can safely pass the owned_establishment to getEstablishment
+        const establishment = await getEstablishment(user_parsed.owned_establishment);      
+        setEstablishment(establishment);
+      } catch (error) {
+        console.error("Error parsing user:", error);
+      }
+    }
+
+    fetchEstablishment();
+  }, [])
 
   return (
     <div className="verification-wrapper">
@@ -58,47 +146,8 @@ function DashboardPage() {
                 <div style={{ width: "100%" }}>Price</div>
                 <div style={{ width: "100%" }}>Action</div>
               </div>
-              {
-                Array.from({length: 30}).map((_, rowIndex) => {
-                  const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
+              {establishment === undefined ? null : UpdateRows(establishment.menu_items)}
 
-                  return (<div className={class_name} onClick={() => setSelectedRow(rowIndex)}>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>
-                      {selectedRow === rowIndex ? (
-                        <div className="action-buttons">
-                        <div className="reject-button">
-                          <Button 
-                            sx={{
-                              backgroundColor: "#dc3545"
-                            }}
-                            className="button" 
-                            variant="contained" 
-                            startIcon={<ThumbDown />}>
-                            Reject
-                          </Button>
-                        </div>
-                        <div className="approve-button">
-                          <Button 
-                            sx={{
-                              backgroundColor: "#28a745",
-                            }}
-                            className="button"
-                            variant="contained" 
-                            startIcon={<ThumbUp />}>
-                            Approve
-                          </Button>
-                        </div>
-                      </div>
-                      ) : null}
-                    </div>
-                  </div>)
-                })
-              }
             </div>
       </div>
     </div>
