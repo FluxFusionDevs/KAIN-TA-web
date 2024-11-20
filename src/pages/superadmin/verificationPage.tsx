@@ -15,18 +15,6 @@ function VerificationPage() {
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
   const [selectedRow, setSelectedRow] = useState<number>(0);
 
-  const mstyles = {
-    button: {
-      outline: "none",
-      "&:focus": {
-        outline: "none",
-        boxShadow: "none", // Removes focus ring shadow
-      },
-      borderBottom:
-        selectedTab === Tab.Establishments ? "2px solid black" : "none",
-    },
-  };
-
   return (
     <div className="verification-wrapper">
       <div className="table">

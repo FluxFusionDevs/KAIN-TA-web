@@ -1,8 +1,6 @@
 import { useState, CSSProperties } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
-import Modal from "../../components/Modal";
-import TextField from '@mui/material/TextField';
 import { Button } from "@mui/material";
 
 import './superadminView.css'
@@ -24,8 +22,6 @@ enum SidebarTab {
 }
 
 function SuperadminView() {
-  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
-  const [selectedRow, setSelectedRow] = useState<number>(0);
   const [selectedSidebarTab, setSelectedSidebarTab] = useState<SidebarTab>(SidebarTab.Verification);
 
   const sidebar_buttons = [
