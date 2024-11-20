@@ -43,7 +43,10 @@ function DashboardPage() {
   }
 
   async function handleDelete(id: string) {
-    const new_estab = await deleteFood(id);
+    if (establishment === undefined) return;
+
+    const new_estab = await deleteFood(id, establishment._id);
+    
     setEstablishment(new_estab);
   }
 

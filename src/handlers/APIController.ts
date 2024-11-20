@@ -54,21 +54,24 @@ export const getEstablishment = async (owner_id: string): Promise<EstablishmentM
   return data;
 }
 
-export const deleteFood = async (food_id: string): Promise<EstablishmentModel> => {
+export const deleteFood = async (food_id: string, establishment_id: string): Promise<EstablishmentModel> => {
   const apiURL = `${hostURL}/api/foods/delete`;
 
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}?_id=${food_id}`, {
+  const response = await fetch(apiURL, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      _id: food_id
+      foodItemId: food_id,
+      establishmentId: establishment_id,
     })
   });
+
+  console.log(response);
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
