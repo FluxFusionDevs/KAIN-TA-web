@@ -5,6 +5,7 @@ export type UserModel = {
     _id: string;
     name: string;
     type: UserType;
+    avatar: string;
     email_type: EmailType;
     owned_establishment: string | null;
     email: string;
