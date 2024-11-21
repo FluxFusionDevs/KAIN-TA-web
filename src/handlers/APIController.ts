@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { UserModel, UserPayload } from "../models/userModel";
-import { EstablishmentModel } from "../models/establishmentModel";
+import { EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
 import { Food } from "../models/foodModel";
 import { PaymentModel } from "../models/paymentModel";
 
@@ -180,5 +180,53 @@ export const getPayments = async (): Promise<PaymentModel[]> => {
 
   const data: PaymentModel[] = await response.json();
   console.log(data);
+  return data;
+}
+
+export const updatePayment = async (payment_id: string, status: EstablishmentStatus): Promise<PaymentModel> => {
+  const apiURL = `${hostURL}`;
+
+  if (!hostURL)
+    throw new Error("API URL is not defined in the environment variables.");
+
+  const response = await fetch(`${apiURL}/api/payments/update-status`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      _id: payment_id,
+      status: status
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: PaymentModel = await response.json();
+  return data;
+}
+
+export const updateEstablishmentStatus = async (_id: string, status: EstablishmentStatus): Promise<EstablishmentModel> => {
+  const apiURL = `${hostURL}/api/establishments/update-establishment`;
+
+  if (!hostURL)
+    throw new Error("API URL is not defined in the environment variables.");
+
+  const response = await fetch(`${apiURL}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ _id, status }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: EstablishmentModel = await response.json();
+
   return data;
 }
