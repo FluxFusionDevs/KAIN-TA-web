@@ -1,12 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 
 import './accountsPage.css'
 import { ThumbDown } from "@mui/icons-material";
+import { getPayments } from "../../handlers/APIController";
+import { PaymentModel } from "../../models/paymentModel";
 
 function AccountsPage() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
+  const [payments, setPayments] = useState<PaymentModel[]>([]);
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      try {
+        const data = await getPayments();      
+        const filtered = data.filter(payment => payment.status === "PENDING");
+        setPayments(filtered);
+      } catch (error) {
+        console.error("Error parsing user:", error);
+      }
+    }
+
+    fetchEstablishment();
+  }, [])
 
   return (
     <div className="verification-wrapper">
@@ -17,19 +34,29 @@ function AccountsPage() {
                 <div style={{ width: "100%" }}>Type</div>
                 <div style={{ width: "100%" }}>Profile Image</div>
                 <div style={{ width: "100%" }}>Price</div>
-                <div style={{ width: "100%" }}>Duration</div>
+                <div style={{ width: "100%" }}>Documents</div>
                 <div style={{ width: "100%" }}>Action</div>
               </div>
-              {
-                Array.from({length: 30}).map((_, rowIndex) => {
+              {payments !== undefined ?
+                payments.map((item, rowIndex) => {
                   const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
 
                   return (<div className={class_name} onClick={() => setSelectedRow(rowIndex)}>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
+                    <div>{item.user.name}</div>
+                    <div>{item.type}</div>
+                    <div>
+                      <div>
+                         {
+                          (item.user.avatar === null) || (item.user.avatar === "") ? 
+                            <a href={`${import.meta.env.VITE_API_URL}${item.user.avatar}`} target="_blank">Click to View</a> :
+                            <div>No Image</div>
+                         }
+                       </div>
+                    </div>
+                    <div>{item.amount} PHP</div>
+                    <div>
+                      documents here
+                    </div>
                     <div>
                       {selectedRow === rowIndex ? (
                         <div className="action-buttons">
@@ -60,7 +87,7 @@ function AccountsPage() {
                     </div>
                   </div>)
                 })
-              }
+                : null} 
             </div>
       </div>
     </div>
