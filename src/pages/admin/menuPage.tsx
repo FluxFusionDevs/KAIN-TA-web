@@ -1,13 +1,13 @@
 import { ComponentType, ReactText, useEffect, useRef, useState } from "react";
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { Delete, DoNotStepOutlined, Edit, Image } from "@mui/icons-material";
+import { Dashboard, Delete, DoNotStepOutlined, Edit, Image } from "@mui/icons-material";
 
 import Modal from "../../components/Modal";
 
 import './menuPage.css'
 import { Food } from "../../models/foodModel";
 import { EstablishmentModel } from "../../models/establishmentModel";
-import { addFood, deleteFood, getEstablishment } from "../../handlers/APIController";
+import { addFood, deleteFood, getEstablishment, updateFood } from "../../handlers/APIController";
 import { UserModel } from "../../models/userModel";
 import { convertToBlob } from "../../handlers/ImageHandler";
 
@@ -29,6 +29,27 @@ function DashboardPage() {
     description: "",
     price: 0,
   });
+
+  const [editFood, setEditFood] = useState<Food>({
+    _id: "",
+    name: "",
+    tags: [],
+    image: "",
+    description: "",
+    price: 0,
+  });
+
+  async function handleEdit() {
+    setState(DashboardState.IsSaving);
+    console.log("Edit Food", editFood);
+    if (establishment !== null && establishment !== undefined) {
+      try {
+        const new_esta = await updateFood(editFood, establishment._id);
+        setEstablishment(new_esta);
+      } catch (err) {
+      }
+    }
+  }
 
   async function handleAdd() {
     setState(DashboardState.IsSaving);
@@ -118,6 +139,77 @@ function DashboardPage() {
   </div>,
   ]
 
+  const edit_inputs = [
+    <div style={styles.section}>
+      <TextField 
+      value={editFood?.name}
+      onChange={event => {
+        const cur_food: Food = { ...editFood };
+        cur_food.name = event.target.value;
+        setEditFood(cur_food);
+      }} 
+      style={styles.text_input} id="text_input" label="Name" variant="standard" />
+      {editFood.name === "" ? (<FormHelperText style={{color: '#ff4444'}}>This Field is Required</FormHelperText>) : null}
+    </div>,
+    <div style={styles.section}>
+      <TextField 
+        value={editFood?.description}
+        onChange={event => {
+          const cur_food: Food = { ...editFood };
+          cur_food.description = event.target.value;
+          setEditFood(cur_food);
+        }} 
+        style={styles.text_input} id="text_input" label="Description" variant="standard" />
+        {editFood.description === "" ? (<FormHelperText style={{color: '#ff4444'}}>This Field is Required</FormHelperText>) : null}
+    </div>,
+    <div style={styles.section}>
+      <TextField 
+        value={editFood?.tags.join(',')}
+        onChange={event => {
+          const cur_food: Food = { ...editFood };
+          cur_food.tags = event.target.value.split(',');
+          setEditFood(cur_food);
+        }} 
+        style={styles.text_input} id="text_input" label="Tags" variant="standard" />
+        {editFood.tags.length < 1 ? (<FormHelperText style={{color: '#ff4444'}}>This Field is Required</FormHelperText>) : null}
+    </div>,
+    <div style={styles.section}>
+      <TextField 
+        sx={{
+          "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+          display: "none", 
+          },
+        "& input[type=number]": {
+          MozAppearance: "textfield",
+        },
+        }}
+        type="number"
+        value={editFood?.price.toString()}
+        onChange={event => {
+          const cur_food: Food = { ...editFood };
+          cur_food.price = parseFloat(event.target.value);
+          setEditFood(cur_food);
+        }} 
+        style={styles.text_input} id="text_input" label="Price" variant="standard" />
+    </div>,
+    <div style={styles.section}>
+    <Button
+      onClick={() => {
+        if (inputFile.current) {
+          inputFile.current.click();
+        }
+      }}
+      sx={{
+        width: "100%"
+      }}
+      className="button"
+      variant="contained"
+      startIcon={<Image />}>
+        Upload Image
+    </Button>
+  </div>,
+  ]
+
   function UpdateRows(menu: Food[]):JSX.Element[] {
     const rows: JSX.Element[] = [];
     menu.forEach((item, rowIndex) => {
@@ -153,6 +245,10 @@ function DashboardPage() {
                 </div>
                 <div className="approve-button">
                   <Button
+                    onClick={() => {
+                      setState(DashboardState.IsEditting);
+                      setEditFood(item);
+                    }}
                     sx={{
                       backgroundColor: "#28a745",
                     }}
@@ -228,7 +324,16 @@ function DashboardPage() {
           onSubmit={() => handleAdd()}
           onCancel={() => setState(DashboardState.Idle)}
           />
-      ) : []}
+      ) : null}
+
+      {state === DashboardState.IsEditting ? (
+        <Modal 
+          header="EDIT FOOD" 
+          content={(edit_inputs)}
+          onSubmit={() => handleEdit()}
+          onCancel={() => setState(DashboardState.Idle)}
+          />
+      ) : null}
       <div className="table">
         <Button 
           style={{ ...styles.tab_button, background: "#2673DD", color: "white", width: 200, borderRadius: 25, marginBottom: 20 }}
