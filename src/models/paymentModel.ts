@@ -1,12 +1,17 @@
 import { UserModel } from "./userModel";
 
+export type PaymentStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type PaymentMethods = "GCASH";
+
 export type PaymentModel = {
   _id: string;
   type: string;
-  status: string;
-  user: UserModel;
+  amount: 0;
+  paymentMethod: PaymentMethods;
+  proofOfPayment: string;
+  status: PaymentStatus;
+  user: UserModel | string;
   createdAt: string;
   updatedAt: string;
-  amount: 0;
   __v: 0;
 };

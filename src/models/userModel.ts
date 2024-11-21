@@ -1,3 +1,5 @@
+import { EstablishmentModel } from "./establishmentModel";
+
 export type UserType = "ADMIN" | "OWNER" | "USER";
 export type EmailType = "GOOGLE" | "EMAIL" | "APPLE";
 
@@ -7,7 +9,7 @@ export type UserModel = {
     type: UserType;
     avatar: string;
     email_type: EmailType;
-    owned_establishment: string | null;
+    owned_establishment: string | null | EstablishmentModel;
     email: string;
     password: string;
     favorite_establishments: string[];
