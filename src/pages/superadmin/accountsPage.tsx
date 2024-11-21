@@ -4,12 +4,29 @@ import ThumbUp from "@mui/icons-material/ThumbUp";
 
 import './accountsPage.css'
 import { ThumbDown } from "@mui/icons-material";
-import { getPayments } from "../../handlers/APIController";
+import { getPayments, updatePayment } from "../../handlers/APIController";
 import { PaymentModel } from "../../models/paymentModel";
+import { EstablishmentModel } from "../../models/establishmentModel";
+import { UserModel } from "../../models/userModel";
 
 function AccountsPage() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const [payments, setPayments] = useState<PaymentModel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleReject = async (id: string) => {
+    setIsLoading(true);
+    const data = await updatePayment(id, "REJECTED");
+    console.log(data);
+    setIsLoading(false);
+  }
+
+  const handleApprove = async (id: string) => {
+    setIsLoading(true);
+    const data = await updatePayment(id, "APPROVED");
+    console.log(data);
+    setIsLoading(false);
+  }
 
   useEffect(() => {
     const fetchEstablishment = async () => {
@@ -22,8 +39,10 @@ function AccountsPage() {
       }
     }
 
-    fetchEstablishment();
-  }, [])
+    if (!isLoading) {
+      fetchEstablishment();
+    }
+  }, [isLoading])
 
   return (
     <div className="verification-wrapper">
@@ -34,7 +53,7 @@ function AccountsPage() {
                 <div style={{ width: "100%" }}>Type</div>
                 <div style={{ width: "100%" }}>Profile Image</div>
                 <div style={{ width: "100%" }}>Price</div>
-                <div style={{ width: "100%" }}>Documents</div>
+                <div style={{ width: "100%" }}>Proof of Payment</div>
                 <div style={{ width: "100%" }}>Action</div>
               </div>
               {payments !== undefined ?
@@ -42,12 +61,14 @@ function AccountsPage() {
                   const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
 
                   return (<div className={class_name} onClick={() => setSelectedRow(rowIndex)}>
-                    <div>{item.user.name}</div>
+                    <div>
+                    {(typeof item.user === "object") ? item.user.name : item.user}
+                    </div>
                     <div>{item.type}</div>
                     <div>
                       <div>
                          {
-                          (item.user.avatar === null) || (item.user.avatar === "") ? 
+                          ((typeof item.user === "object") && item.user.avatar === null) || (typeof item.user === "object") && (item.user.avatar === "") ? 
                             <a href={`${import.meta.env.VITE_API_URL}${item.user.avatar}`} target="_blank">Click to View</a> :
                             <div>No Image</div>
                          }
@@ -55,7 +76,9 @@ function AccountsPage() {
                     </div>
                     <div>{item.amount} PHP</div>
                     <div>
-                      documents here
+                    {
+                          <a href={`${import.meta.env.VITE_API_URL}${item.proofOfPayment}`} target="_blank">Click to View</a>
+                         }
                     </div>
                     <div>
                       {selectedRow === rowIndex ? (
@@ -65,6 +88,8 @@ function AccountsPage() {
                             sx={{
                               backgroundColor: "#dc3545"
                             }}
+                            disabled={isLoading}
+                            onClick={() => handleReject(item._id)}
                             className="button" 
                             variant="contained" 
                             startIcon={<ThumbDown />}>
@@ -73,9 +98,11 @@ function AccountsPage() {
                         </div>
                         <div className="approve-button">
                           <Button 
+                            onClick={() => handleApprove(item._id)}
                             sx={{
                               backgroundColor: "#28a745",
                             }}
+                            disabled={isLoading}
                             className="button"
                             variant="contained" 
                             startIcon={<ThumbUp />}>
