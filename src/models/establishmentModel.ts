@@ -18,20 +18,27 @@ export type Rating = {
     comment: string;
 }
 
+export type Documents = {
+    _id: string;
+    name: string;
+    image: string;
+}
+
 export type EstablishmentModel = {
     _id: string;
-    status: EstablishmentStatus;
     name: string;
     location: Location;
-    images: string[];
+    menu_items: Food[];
     contact_number: string;
     email: string;
     barangay: string;
     quisines: string[];
-    operating_hours: string[];
+    operating_hours: string;
     ratings: Rating[];
     owner: string;
-    menu_items: Food[];
+    status: EstablishmentStatus;
+    documents: Documents[];
+    image: string;
     createdAt: string;
     updatedAt: string;
 }
