@@ -6,7 +6,7 @@ import './verificationPage.css'
 import { ThumbDown } from "@mui/icons-material";
 import { EstablishmentModel } from "../../models/establishmentModel";
 import { UserModel } from "../../models/userModel";
-import { getEstablishments } from "../../handlers/APIController";
+import { getEstablishments, updateEstablishmentStatus, updatePayment } from "../../handlers/APIController";
 
 enum Tab {
   Users,
@@ -15,24 +15,38 @@ enum Tab {
 }
 
 function VerificationPage() {
-  const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Users);
   const [selectedRow, setSelectedRow] = useState<number>(0);
 
   const [establishments, setEstablishments] = useState<EstablishmentModel[]>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleReject = async (id: string) => {
+    setIsLoading(true);
+    const data = await updateEstablishmentStatus(id, "REJECTED");
+    setIsLoading(false);
+  }
+
+  const handleApprove = async (id: string) => {
+    setIsLoading(true);
+    const data = await updateEstablishmentStatus(id, "APPROVED");
+    setIsLoading(false);
+  }
 
   useEffect(() => {
     const fetchEstablishment = async () => {
       try {
-        const establishments_data = await getEstablishments();      
-        console.log(establishments);
-        setEstablishments(establishments_data);
+        const data = await getEstablishments();      
+        const filtered = data.filter(est => est.status === "PENDING");
+        setEstablishments(filtered);
       } catch (error) {
         console.error("Error parsing user:", error);
       }
     }
 
-    fetchEstablishment();
-  }, [])
+    if (!isLoading) {
+      fetchEstablishment();
+    }
+  }, [isLoading])
 
   return (
     <div className="verification-wrapper">
@@ -42,12 +56,7 @@ function VerificationPage() {
                 <div style={{ width: "100%" }}>Name</div>
                 <div style={{ width: "100%" }}>Type</div>
                 <div style={{ width: "100%" }}>Profile Image</div>
-                <div style={{ width: "100%" }}>Price</div>
                 <div style={{ width: "100%" }}>Documents</div>
-                <div style={{ width: "100%" }}>Establishment Name</div>
-                <div style={{ width: "100%" }}>Menu</div>
-                <div style={{ width: "100%" }}>Location</div>
-                <div style={{ width: "100%" }}>Address</div>
                 <div style={{ width: "100%" }}>Action</div>
               </div>
               {establishments !== undefined ?
@@ -55,7 +64,7 @@ function VerificationPage() {
                   const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
 
                   return (<div className={class_name} onClick={() => setSelectedRow(rowIndex)}>
-                    <div>{item.owner}</div>
+                    <div>{item.name}</div>
                     <div>{item.quisines.join(', ')}</div>
                     <div>
                       { item.image === "" ? 
@@ -63,17 +72,20 @@ function VerificationPage() {
                       <a href={`${import.meta.env.VITE_API_URL}${item.image}`} target="_blank">See Image</a>
                       }
                     </div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
-                    <div>ROW</div>
+                    <div>
+                      {
+                      item.documents.map((item, index) => (
+                        <a href={`${import.meta.env.VITE_API_URL}${item.image}`}>Click to View</a>
+                      ))
+                    }
+                    </div>
                     <div>
                       {selectedRow === rowIndex ? (
                         <div className="action-buttons">
                         <div className="reject-button">
                           <Button 
+                            disabled={isLoading}
+                            onClick={() => handleReject(item._id)}
                             sx={{
                               backgroundColor: "#dc3545"
                             }}
@@ -85,6 +97,8 @@ function VerificationPage() {
                         </div>
                         <div className="approve-button">
                           <Button 
+                            disabled={isLoading}
+                            onClick={() => handleApprove(item._id)}
                             sx={{
                               backgroundColor: "#28a745",
                             }}
