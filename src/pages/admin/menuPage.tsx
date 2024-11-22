@@ -288,9 +288,10 @@ function DashboardPage() {
           return;
         }
 
-        // Now we can safely pass the owned_establishment to getEstablishment
-        const establishment = await getEstablishment(user_parsed.owned_establishment);      
-        setEstablishment(establishment);
+        const estab: string | EstablishmentModel = user_parsed.owned_establishment;
+        const converted: EstablishmentModel = (typeof estab) === 'string' ? await getEstablishment(user_parsed.owned_establishment as string) : user_parsed.owned_establishment as EstablishmentModel;
+        
+        setEstablishment(converted);
       } catch (error) {
         console.error("Error parsing user:", error);
       }
