@@ -1,0 +1,22 @@
+.from-wrapper .section {
+    margin-top: 10px;
+}
+
+.from-wrapper .section > * {
+    width: 100%;
+    max-width: 720px;
+}
+
+.from-wrapper .header {
+    font-size: 32px;
+    font-weight: 700;
+    margin: auto;
+}
+
+.from-wrapper {
+    padding: 40px;
+}
+
+.from-wrapper .submit-btn {
+    width: 150px;
+}

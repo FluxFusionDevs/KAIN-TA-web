@@ -1,4 +1,4 @@
-import { useState, CSSProperties } from "react";
+import { useState, CSSProperties, useEffect } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
 import Modal from "../../components/Modal";
@@ -8,6 +8,10 @@ import { Button } from "@mui/material";
 import MenuPage from "./menuPage";
 import './adminView.css'
 import FeedbackView from "./feedbackView";
+import { UserModel } from "../../models/userModel";
+import EstablishmentForm from "./createEstablishmentForm";
+import { EstablishmentModel } from "../../models/establishmentModel";
+import { getEstablishment } from "../../handlers/APIController";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -21,6 +25,31 @@ function AdminView() {
   const [state, setState] = useState<DashboardState>(DashboardState.Idle);
 
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Dashboard);
+  const [user, setUser] = useState<UserModel>();
+  const [establishment, setEstablishment] = useState<EstablishmentModel>();
+
+  useEffect(() => {
+    const session_user = sessionStorage.getItem('user');
+    if (session_user === null) return;
+
+    const user_data: UserModel = JSON.parse(session_user);
+    setUser(user_data);
+
+    const fetchData = async () => {
+      if (typeof user_data.owned_establishment === 'string') {
+        const fetched_data: EstablishmentModel = await getEstablishment(user_data.owned_establishment);
+        setEstablishment(fetched_data);
+      } else if (user_data.owned_establishment !== null) {
+        setEstablishment(user_data.owned_establishment);
+      } else {
+        setEstablishment(undefined)
+      }
+
+      console.log("Test", !establishment);
+    }
+
+    fetchData();
+  }, [])
 
   let sidebar_buttons: React.ReactNode[] = [];
   for (const key in Tab) {
@@ -59,31 +88,39 @@ function AdminView() {
     <div style={styles.background}>
       <div style={styles.modal}>
         <div className="container">
-          <div style={styles.sidebar}>
-            <img
-              style={{
-                width: "70%",
-                height: "auto",
-                borderRadius: "50%",
-                marginTop: 77,
-              }}
-              src={logo}
-              alt=""
-            />
+          {establishment !== undefined && establishment.status === "APPROVED" && (
+            <div style={styles.sidebar}>
+              <img
+                style={{
+                  width: "70%",
+                  height: "auto",
+                  borderRadius: "50%",
+                  marginTop: 77,
+                }}
+                src={logo}
+                alt=""
+              />
 
-            <div style={{ marginTop: 35 }}>{sidebar_buttons}</div>
-          </div>
+              <div style={{ marginTop: 35 }}>{sidebar_buttons}</div>
+            </div>
+          )}
+
           <div style={{
             width: "100%",
             paddingLeft: 35,
             paddingRight: 35,
             overflow: "auto",
           }}>
-            {selectedTab === Tab.Menu && (
+            {!establishment || (establishment !== undefined && establishment.status !== "APPROVED") ? 
+            (<EstablishmentForm />) : null}
+
+            {
+            selectedTab === Tab.Menu && (
               <MenuPage />
             )}
 
-            {selectedTab === Tab.Feedbacks && (
+            {
+            selectedTab === Tab.Feedbacks && (
               <FeedbackView />
             )}
           </div>
