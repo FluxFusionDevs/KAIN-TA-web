@@ -8,24 +8,27 @@ interface ModalProps {
   content: React.ReactNode;
   onSubmit?: () => void;
   onCancel?: () => void;
+  disableButtons?: boolean;
+  contentStyle?: React.CSSProperties;
 }
 
-const Modal: React.FC<ModalProps> = ({ header, content, onSubmit, onCancel }) => {
+const Modal: React.FC<ModalProps> = ({ header, content, onSubmit, onCancel, disableButtons, contentStyle }) => {
   return (
     <div className="modal">
       <div className="modal-container">
         <div className="header">{header}</div>
-        <div className="content">
+        <div className="content" style={contentStyle}>
             {content}
         </div>
-        <div className="buttons">
+
+        {!disableButtons && (<div className="buttons">
             <div style={{float: "left"}}>
                 <Button className="btn" onClick={onCancel}>Cancel</Button>
             </div>
             <div style={{float: "right"}}>
                 <Button variant="contained" className="btn" onClick={onSubmit}>Done</Button>
             </div>
-        </div>
+        </div>)}
       </div>
     </div>
   );
