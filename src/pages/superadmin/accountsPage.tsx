@@ -162,6 +162,7 @@ function AccountsPage() {
 
       {isModalOpen && (
         <Modal
+          disableButtons
           header={
             modalType === "profile" ? "Profile Image" : "Proof of Payment"
           }

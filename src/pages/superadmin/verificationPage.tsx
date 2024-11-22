@@ -120,6 +120,7 @@ function VerificationPage() {
       </div>
       {isModalOpen && (
         <Modal 
+        disableButtons
           header="Image Preview" 
           contentStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           content={<img src={selectedImage} alt="Preview" style={{ width: '50%' }} />} 
