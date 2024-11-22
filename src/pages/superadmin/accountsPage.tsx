@@ -16,14 +16,14 @@ function AccountsPage() {
 
   const handleReject = async (id: string) => {
     setIsLoading(true);
-    const data = await updatePayment(id, "REJECTED");
+    const data = await updatePayment(id, "FAILED");
     console.log(data);
     setIsLoading(false);
   }
 
   const handleApprove = async (id: string) => {
     setIsLoading(true);
-    const data = await updatePayment(id, "APPROVED");
+    const data = await updatePayment(id, "COMPLETED");
     console.log(data);
     setIsLoading(false);
   }
