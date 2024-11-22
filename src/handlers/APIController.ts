@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { UserModel, UserPayload } from "../models/userModel";
-import { EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
+import { EstablishmentForm, EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
 import { Food } from "../models/foodModel";
 import { PaymentModel } from "../models/paymentModel";
 
@@ -32,6 +32,42 @@ export const loginWithEmail = async (email: string, password: string): Promise<U
   const data: string = await response.json();
   return jwtDecode<UserPayload>(data);
 };
+
+export const createEstablishment = async (form: EstablishmentForm): Promise<EstablishmentModel> => {
+  const apiURL = `${hostURL}/api/establishments/create-establishment`;
+
+  if (!hostURL)
+    throw new Error("API URL is not defined in the environment variables.");
+
+  if (form.documentImage === undefined) {
+    throw new Error("Document Image is Required");
+  }
+
+  if (form.establishmentImage === undefined) {
+    throw new Error("Establishment Image is Required");
+  }
+
+  const formData = new FormData();
+  formData.append('jsonData', JSON.stringify(form.jsonData));
+  formData.append('documentImage', form.documentImage);
+  formData.append('documentName', form.documentName);
+  formData.append('establishmentImage', form.establishmentImage);
+
+  const response = await fetch(`${apiURL}`, {
+    method: "POST",
+    body: formData
+  });
+
+  console.log(response);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: EstablishmentModel = await response.json();
+
+  return data;
+}
 
 export const getEstablishment = async (owner_id: string): Promise<EstablishmentModel> => {
   const apiURL = `${hostURL}/api/establishments/get-establishment`;
