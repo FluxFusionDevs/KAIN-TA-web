@@ -41,7 +41,6 @@ function DashboardPage() {
 
   async function handleEdit() {
     setState(DashboardState.IsSaving);
-    console.log("Edit Food", editFood);
     if (establishment !== null && establishment !== undefined) {
       try {
         const new_esta = await updateFood(editFood, establishment._id);

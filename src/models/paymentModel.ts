@@ -1,6 +1,6 @@
 import { UserModel } from "./userModel";
 
-export type PaymentStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED";
 export type PaymentMethods = "GCASH";
 
 export type PaymentModel = {
