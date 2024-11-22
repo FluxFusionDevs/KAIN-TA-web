@@ -2,9 +2,10 @@ import { jwtDecode } from "jwt-decode";
 import { UserModel, UserPayload } from "../models/userModel";
 import { EstablishmentForm, EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
 import { Food } from "../models/foodModel";
-import { PaymentModel } from "../models/paymentModel";
+import { PaymentModel, PaymentStatus } from "../models/paymentModel";
 
-const hostURL = import.meta.env.VITE_API_URL; // ! SHOULD BE HIDDEN
+const hostURL = import.meta.env.VITE_API_URL;
+// const hostURL = "http://localhost:3000";
 
 export const loginWithEmail = async (email: string, password: string): Promise<UserPayload> => {
   const apiURL = `${hostURL}/auth/login`;
@@ -150,7 +151,7 @@ export const addFood = async (food: Food, establishment_id: string): Promise<Est
   const formData = new FormData();
   formData.append('name', food.name);
   formData.append('tags', food.tags.join(","));
-  formData.append('image', food.image);
+  formData.append('foodImage', food.image);
   formData.append('description', food.description);
   formData.append('price', food.price.toString());
   formData.append('establishmentId', establishment_id);
@@ -160,7 +161,10 @@ export const addFood = async (food: Food, establishment_id: string): Promise<Est
     body: formData
   });
 
-  console.log(response);
+  console.log("Response: ", response);
+  for (const [key, value] of formData.entries()) {
+    console.log(`${key}:`, typeof value);
+  }
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -177,23 +181,32 @@ export const updateFood = async (food: Food, establishment_id: string): Promise<
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
+  const formData = new FormData();
+  formData.append('name', food.name);
+  formData.append('tags', food.tags.join(","));
+
+  if (typeof food.image !== 'string')
+    formData.append('image', food.image);
+  formData.append('description', food.description);
+  formData.append('price', food.price.toString());
+  formData.append('establishmentId', establishment_id);
+  formData.append('foodItemId', food._id);
+
   const response = await fetch(`${apiURL}`, {
-    method: "POST",
-    body: JSON.stringify({
-      establishmentId: establishment_id,
-      foodItemId: food._id,
-      foodItem: food
-    })
+    method: "PUT",
+    body: formData
   });
 
-  console.log(response);
+  for (const [key, value] of formData.entries()) {
+    console.log(`${key}: ${value} [${typeof value}]`);
+  }
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
   const data: EstablishmentModel = await response.json();
-
+  console.log(data);
   return data;
 }
 
@@ -219,7 +232,7 @@ export const getPayments = async (): Promise<PaymentModel[]> => {
   return data;
 }
 
-export const updatePayment = async (payment_id: string, status: EstablishmentStatus): Promise<PaymentModel> => {
+export const updatePayment = async (payment_id: string, status: PaymentStatus): Promise<PaymentModel> => {
   const apiURL = `${hostURL}`;
 
   if (!hostURL)
