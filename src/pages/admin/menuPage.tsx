@@ -1,6 +1,6 @@
-import { ComponentType, ReactText, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { Dashboard, Delete, DoNotStepOutlined, Edit, Image } from "@mui/icons-material";
+import { Dashboard, Delete, Edit, Image } from "@mui/icons-material";
 
 import Modal from "../../components/Modal";
 
@@ -9,16 +9,18 @@ import { Food } from "../../models/foodModel";
 import { EstablishmentModel } from "../../models/establishmentModel";
 import { addFood, deleteFood, getEstablishment, updateFood } from "../../handlers/APIController";
 import { UserModel } from "../../models/userModel";
-import { convertToBlob } from "../../handlers/ImageHandler";
+import SuperTable, { CellType, SuperCell } from "../../components/SuperTable";
 
 enum DashboardState {
   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
 }
 
 function DashboardPage() {
-  const [selectedRow, setSelectedRow] = useState<number>(0);
   const [state, setState] = useState<DashboardState>(DashboardState.Idle);
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [tableData, setTableData] = useState<SuperCell[][]>();
+
   const inputFile = useRef<HTMLInputElement | null>(null);
     
   const [newFood, setNewFood] = useState<Food>({
@@ -65,9 +67,11 @@ function DashboardPage() {
   async function handleDelete(id: string) {
     if (establishment === undefined) return;
 
+    setIsLoading(true);
     const new_estab = await deleteFood(id, establishment._id);
     
     setEstablishment(new_estab);
+    setIsLoading(false);
   }
 
   const user_inputs = [
@@ -209,64 +213,34 @@ function DashboardPage() {
   </div>,
   ]
 
-  function UpdateRows(menu: Food[]):JSX.Element[] {
-    const rows: JSX.Element[] = [];
-    menu.forEach((item, rowIndex) => {
-      const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
-      rows.push(
-        <div
-          key={item._id}
-          className={class_name}
-          onClick={() => setSelectedRow(rowIndex)}
-        >
-          <div>{item.name}</div>
-          <div>{item.description}</div>
-          <div>{item.tags.join(", ")}</div>
-          <div>
-            <a href={`${import.meta.env.VITE_API_URL}${item.image}`} target="_blank">Click to View</a>
-          </div>
-          <div>{item.price}</div>
-          <div>
-            {selectedRow === rowIndex ? (
-              <div className="action-buttons">
-                <div className="reject-button">
-                  <Button
-                    onClick={() => handleDelete(item._id)}
-                    sx={{
-                      backgroundColor: "#dc3545",
-                    }}
-                    className="button"
-                    variant="contained"
-                    startIcon={<Delete />}
-                  >
-                    Delete
-                  </Button>
-                </div>
-                <div className="approve-button">
-                  <Button
-                    onClick={() => {
-                      setState(DashboardState.IsEditting);
-                      setEditFood(item);
-                    }}
-                    sx={{
-                      backgroundColor: "#28a745",
-                    }}
-                    className="button"
-                    variant="contained"
-                    startIcon={<Edit />}
-                  >
-                    Edit
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      )
-    });
-
-    return rows;
-  }
+  useEffect(() => {
+    // Set table data
+    const headers: SuperCell[] = [
+      { type: "ID", value: "_id" },
+      { type: "HEADER", value: "Name" },
+      { type: "HEADER", value: "Description" },
+      { type: "HEADER", value: "Tags" },
+      { type: "HEADER", value: "Image" },
+      { type: "HEADER", value: "Price" },
+      { type: "HEADER", value: "Actions" }
+    ];
+  
+    if (establishment !== undefined) {
+      const data: SuperCell[][] = [
+        headers,  // Add the headers as the first row
+        ...establishment.menu_items.map(item => [
+          { type: "ID" as CellType, value: item._id },
+          { type: "VALUE" as CellType, value: item.name },
+          { type: "VALUE" as CellType, value: item.description },
+          { type: "VALUE" as CellType, value: item.tags.join(", ") },
+          { type: "IMAGE" as CellType, value: (item.image as string) },
+          { type: "VALUE" as CellType, value: item.price.toString() }
+        ])
+      ];
+  
+      setTableData(data); 
+    }
+  }, [establishment]);
 
   useEffect(() => {
     const fetchEstablishment = async () => {
@@ -317,42 +291,70 @@ function DashboardPage() {
           }
         }}
         />
-      {state === DashboardState.IsAdding ? (
-        <Modal 
-          header="ADD FOOD" 
-          content={(user_inputs)}
-          onSubmit={() => handleAdd()}
-          onCancel={() => setState(DashboardState.Idle)}
-          />
-      ) : null}
 
-      {state === DashboardState.IsEditting ? (
-        <Modal 
-          header="EDIT FOOD" 
-          content={(edit_inputs)}
-          onSubmit={() => handleEdit()}
-          onCancel={() => setState(DashboardState.Idle)}
-          />
-      ) : null}
-      <div className="table">
-        <Button 
-          style={{ ...styles.tab_button, background: "#2673DD", color: "white", width: 200, borderRadius: 25, marginBottom: 20 }}
-          onClick={() => setState(DashboardState.IsAdding)}>
-          add
+        {/* ADD MODAL */}
+        {state === DashboardState.IsAdding ? (
+          <Modal 
+            header="ADD FOOD" 
+            content={(user_inputs)}
+            onSubmit={() => handleAdd()}
+            onCancel={() => setState(DashboardState.Idle)}
+            />
+        ) : null}
+
+        {/* EDIT MODAL */}
+        {state === DashboardState.IsEditting ? (
+          <Modal 
+            header="EDIT FOOD" 
+            content={(edit_inputs)}
+            onSubmit={() => handleEdit()}
+            onCancel={() => setState(DashboardState.Idle)}
+            />
+        ) : null}
+        <div className="top-header">
+          <Button 
+            style={{ background: "#2673DD", color: "white", width: 200, borderRadius: 25, float: 'left', marginTop: 20, marginBottom: 10 }}
+            onClick={() => setState(DashboardState.IsAdding)}>
+            add
           </Button>
-            <div className="content">
-              <div className="header row row-header">
-                <div style={{ width: "100%" }}>Name</div>
-                <div style={{ width: "100%" }}>Description</div>
-                <div style={{ width: "100%" }}>Tags</div>
-                <div style={{ width: "100%" }}>Image</div>
-                <div style={{ width: "100%" }}>Price</div>
-                <div style={{ width: "100%" }}>Action</div>
-              </div>
-              {establishment === undefined ? null : UpdateRows(establishment.menu_items)}
+        </div>
 
-            </div>
-      </div>
+        <SuperTable 
+          buttons={(id) => [
+            <Button
+              sx={{
+                backgroundColor: "#198754",
+                marginBottom: 1,
+              }}
+              disabled={isLoading}
+              onClick={async () => {
+                if (establishment === undefined) return;
+                const food: Food | undefined = establishment.menu_items.find(food => food._id === id);
+
+                console.log(food);
+                if (food === undefined) return;
+                setEditFood(food);
+                setState(DashboardState.IsEditting);
+              }}
+              className="button"
+              variant="contained"
+              startIcon={<Edit />} >
+              Edit
+            </Button>,
+            <Button
+              sx={{
+                backgroundColor: "#dc3545",
+              }}
+              disabled={isLoading}
+              onClick={() => handleDelete(id)}
+              className="button"
+              variant="contained"
+              startIcon={<Delete />} >
+              Delete
+            </Button>
+          ]}
+          data={tableData ?? []} />
+        
     </div>
   );
 }
