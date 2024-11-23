@@ -161,7 +161,6 @@ export const addFood = async (food: Food, establishment_id: string): Promise<Est
     body: formData
   });
 
-  console.log("Response: ", response);
   for (const [key, value] of formData.entries()) {
     console.log(`${key}:`, typeof value);
   }
@@ -186,7 +185,7 @@ export const updateFood = async (food: Food, establishment_id: string): Promise<
   formData.append('tags', food.tags.join(","));
 
   if (typeof food.image !== 'string')
-    formData.append('image', food.image);
+    formData.append('foodImage', food.image);
   formData.append('description', food.description);
   formData.append('price', food.price.toString());
   formData.append('establishmentId', establishment_id);
@@ -197,6 +196,7 @@ export const updateFood = async (food: Food, establishment_id: string): Promise<
     body: formData
   });
 
+  console.log("Edit Image: ")
   for (const [key, value] of formData.entries()) {
     console.log(`${key}: ${value} [${typeof value}]`);
   }

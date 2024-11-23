@@ -22,6 +22,7 @@ function DashboardPage() {
   const [tableData, setTableData] = useState<SuperCell[][]>();
 
   const inputFile = useRef<HTMLInputElement | null>(null);
+  const inputEdit = useRef<HTMLInputElement | null>(null);
     
   const [newFood, setNewFood] = useState<Food>({
     _id: "",
@@ -45,6 +46,7 @@ function DashboardPage() {
     setState(DashboardState.IsSaving);
     if (establishment !== null && establishment !== undefined) {
       try {
+        console.log("Edit Food Value: ", editFood);
         const new_esta = await updateFood(editFood, establishment._id);
         setEstablishment(new_esta);
       } catch (err) {
@@ -54,7 +56,6 @@ function DashboardPage() {
 
   async function handleAdd() {
     setState(DashboardState.IsSaving);
-    console.log(newFood);
     if (establishment !== null && establishment !== undefined) {
       try {
         const new_esta = await addFood(newFood, establishment._id);
@@ -198,8 +199,8 @@ function DashboardPage() {
     <div style={styles.section}>
     <Button
       onClick={() => {
-        if (inputFile.current) {
-          inputFile.current.click();
+        if (inputEdit.current) {
+          inputEdit.current.click();
         }
       }}
       sx={{
@@ -249,7 +250,6 @@ function DashboardPage() {
         return console.warn("User Tokens not Initialized");
 
       const user_parsed: UserModel = JSON.parse(user) as UserModel;
-      console.log(user_parsed);
 
       if (user_parsed === null || user_parsed === undefined) return;
 
@@ -283,11 +283,26 @@ function DashboardPage() {
         accept="image/*" 
         onChange={event => {
           const file = event.target.files?.[0];
-          console.log(event.target.files?.length);
           if (file) {
-            const cur_food: Food = {...newFood};
-            cur_food.image = file;
+            const cur_food: Food = {...newFood, image: file};
+            console.log("Add Input: ", file);
             setNewFood(cur_food);
+          }
+        }}
+        />
+
+      <input 
+        type="file" 
+        ref={inputEdit} 
+        id="file" 
+        style={{display: 'none'}} 
+        accept="image/*" 
+        onChange={event => {
+          const file = event.target.files?.[0];
+          if (file) {
+            const cur_food: Food = {...editFood, image: file};
+            console.log("Edit Input: ", file);
+            setEditFood(cur_food);
           }
         }}
         />
@@ -311,6 +326,7 @@ function DashboardPage() {
             onCancel={() => setState(DashboardState.Idle)}
             />
         ) : null}
+        
         <div className="top-header">
           <Button 
             style={{ background: "#2673DD", color: "white", width: 200, borderRadius: 25, float: 'left', marginTop: 20, marginBottom: 10 }}
@@ -331,7 +347,6 @@ function DashboardPage() {
                 if (establishment === undefined) return;
                 const food: Food | undefined = establishment.menu_items.find(food => food._id === id);
 
-                console.log(food);
                 if (food === undefined) return;
                 setEditFood(food);
                 setState(DashboardState.IsEditting);
