@@ -16,9 +16,10 @@ function DashboardPage() {
       const data = await getPayments();
       const dateCounts: Record<string, number> = {};
       const result: Array<[string, number]> = [];
-
     
       data.forEach((item) => {
+        if (item.status !== "COMPLETED") return;
+
         const isoString = item.createdAt;
         const date = new Date(isoString);
         const curr_date = `${months[date.getMonth() + 1]} ${date.getDate()}`;
@@ -85,7 +86,7 @@ function DashboardPage() {
         <Chart
           chartType="Bar"
           data={[
-            ["Day", "Subscribers"],
+            ["Day", "Revenue"],
             ...revenueData
           ]}
           legendToggle />
