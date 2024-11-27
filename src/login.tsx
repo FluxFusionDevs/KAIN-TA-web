@@ -50,7 +50,6 @@ function Login() {
       <Snackbar
         open={errors !== ""}
         autoHideDuration={6000}
-        onClose={() => setErrors("")}
         message={errors}
         action={action}
       />
