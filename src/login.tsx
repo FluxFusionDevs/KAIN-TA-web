@@ -1,54 +1,74 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Button, TextField, IconButton, Snackbar } from '@mui/material';
-import background from './assets/images/background.png'
+import background from './assets/images/background.png';
 import { Apple, Delete, Google } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { loginWithEmail } from './handlers/APIController';
+import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
 import { UserPayload, UserType } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
 
 function Login() {
-    const navigate = useNavigate();
-    const [count, setCount] = useState(0)
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState("");
+  const navigate = useNavigate();
+  const [count, setCount] = useState(0);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState('');
 
-    const handleLogin = async () => {
-      try {
-        const data: UserPayload = await loginWithEmail(email, password);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
+  const handleLogin = async () => {
+    try {
+      const data: UserPayload = await loginWithEmail(email, password);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
 
-        if (data.user.type === "OWNER") {
-          navigate('/admin');
-        } else if (data.user.type === "ADMIN") {
-          navigate('/superadmin');
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setErrors(err.message);
-        }
-
-        return;
+      if (data.user.type === 'OWNER') {
+        navigate('/admin');
+      } else if (data.user.type === 'ADMIN') {
+        navigate('/superadmin');
       }
-    }
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrors(err.message);
+      }
 
-    const action = (
-      <React.Fragment>
-        <IconButton
-          size="small"
-          aria-label="close"
-          color="inherit"
-          onClick={() => setErrors("")}>
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </React.Fragment>
-    );
+      return;
+    }
+  };
+
+  const handleLoginGoogle = async () => {
+    try {
+      const data: UserPayload = await loginWithGoogle();
+      sessionStorage.setItem('user', JSON.stringify(data.user));
+
+      if (data.user.type === 'OWNER') {
+        navigate('/admin');
+      } else if (data.user.type === 'ADMIN') {
+        navigate('/superadmin');
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrors(err.message);
+      }
+
+      return;
+    }
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={() => setErrors('')}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
 
   return (
     <div style={styles.background}>
       <Snackbar
-        open={errors !== ""}
+        open={errors !== ''}
         autoHideDuration={6000}
         message={errors}
         action={action}
@@ -89,14 +109,19 @@ function Login() {
           </div>
 
           <div style={{ ...styles.section, ...{ marginTop: 25 } }}>
-            {/* <div style={{padding: 10}} >or Login with</div>
-            <IconButton style={{marginRight: 5}} className="alt-buttons" aria-label="apple">
+            <div style={{ padding: 10 }}>or Login with</div>
+            {/* <IconButton style={{marginRight: 5}} className="alt-buttons" aria-label="apple">
               <Apple fontSize="large" />
-            </IconButton>
+            </IconButton>  */}
 
-            <IconButton style={{marginLeft: 5}} className="alt-buttons" aria-label="google">
-              <Google fontSize="large" />
-            </IconButton> */}
+            <IconButton
+              style={{ marginLeft: 5 }}
+              className="alt-buttons"
+              aria-label="google"
+              onClick={() => handleLoginGoogle()}
+            >
+              <Google color="primary" fontSize="large" />
+            </IconButton>
           </div>
         </div>
       </div>

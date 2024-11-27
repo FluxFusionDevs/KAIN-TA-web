@@ -286,6 +286,17 @@ export const updateEstablishmentStatus = async (_id: string, status: Establishme
   return data;
 }
 
+export const loginWithGoogle = (): void => {
+  const apiURL = `${hostURL}/auth/google`;
+
+  if (!hostURL) {
+    throw new Error("API URL is not defined in the environment variables.");
+  }
+
+  // Redirect the user to the Google authentication route
+  window.location.href = apiURL;
+};
+
 export const Logout = async () => {
   sessionStorage.removeItem('authToken');
   window.location.href = '/';

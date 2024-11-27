@@ -5,6 +5,7 @@ import AdminView from './pages/admin/adminView';
 import Login from './login';
 
 import './App.css'
+import AuthCallback from './handlers/AuthCallback';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/superadmin" element={<SuperAdminDashboard />} />
         <Route path="/admin" element={<AdminView />} />
+        <Route path='/auth/callback' element={<AuthCallback />} />
       </Routes>
     </Router>
   );
