@@ -14,7 +14,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/superadmin" element={<SuperAdminDashboard />} />
         <Route path="/admin" element={<AdminView />} />
-        <Route path='/auth/callback' element={<AuthCallback />} />
+        <Route path='/auth/google/callback' element={<AuthCallback />} />
       </Routes>
     </Router>
   );
