@@ -8,6 +8,7 @@ import './superadminView.css'
 import VerificationPage from "./verificationPage";
 import AccountsPage from "./accountsPage";
 import DashboardPage from "./dashboardPage";
+import { Logout } from "../../handlers/APIController";
 
 enum Tab {
   Users,
@@ -19,6 +20,7 @@ enum SidebarTab {
   Verification,
   Accounts,
   Dashboard,
+  Logout
 }
 
 function SuperadminView() {
@@ -43,6 +45,16 @@ function SuperadminView() {
       ...styles.sidebar_button,
       ...(selectedSidebarTab === SidebarTab.Dashboard ? styles.selected_sidebar_button : {})
     }}>Dashboard</Button>,
+    <Button
+      onClick={async () =>  {
+        await Logout();
+      }}
+      style={{
+        ...styles.sidebar_button,
+      }}
+    >
+      Logout
+    </Button>
   ];
 
   return (
