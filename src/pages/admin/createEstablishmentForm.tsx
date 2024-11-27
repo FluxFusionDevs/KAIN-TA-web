@@ -1,4 +1,4 @@
-import { Button, FormHelperText, TextField } from "@mui/material";
+import { Button, FormControl, FormHelperText, InputLabel, TextField } from "@mui/material";
 import { useRef, useState } from "react";
 import {
   emptyEstablishmentForm,
@@ -385,22 +385,27 @@ function EstablishmentForm() {
         </Button>
       </div>
       <div className="section">
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          label="Age"
-          onChange={(event: SelectChangeEvent) => {
-            const cur_data: FormData = {...form};
-            cur_data.jsonData.barangay = event.target.value;
-            setForm(cur_data);
-          }}
-        >
-          {barangays.map((item, index) => (
-            <MenuItem value={item._id}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl fullWidth>
+      <InputLabel id="demo-simple-select-label" style={{ color: 'black' }}>
+        Barangay
+      </InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        label="Barangay"
+        onChange={(event: SelectChangeEvent) => {
+          const cur_data: FormData = { ...form };
+          cur_data.jsonData.barangay = event.target.value;
+          setForm(cur_data);
+        }}
+      >
+        {barangays.map((item, index) => (
+          <MenuItem key={index} value={item._id}>
+            {item.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
       </div>
       {error !== "" ? (
         <div className="section">
