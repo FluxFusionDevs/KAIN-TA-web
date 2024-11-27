@@ -20,8 +20,8 @@ const Modal: React.FC<ModalProps> = ({
   contentStyle,
 }) => {
   return (
-    <div className="modal" onClick={onCancel}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="modal" onClick={onCancel} >
+      <div className="modal-container" onClick={(e) => e.stopPropagation()} style={styles.container}>
         <div className="header">{header}</div>
         <div className="content" style={contentStyle}>
           {content}
@@ -41,9 +41,16 @@ const Modal: React.FC<ModalProps> = ({
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    paddingBottom: 20,
+  }
 };
 
 export default Modal;
