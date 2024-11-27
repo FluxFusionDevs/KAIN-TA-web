@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import AuthModal from '../components/AuthModal';
 
-const fetchWrapper = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+const fetchWrapper = async (
+  input: RequestInfo,
+  init?: RequestInit
+): Promise<Response> => {
   // Add authorization token to headers
   const token = sessionStorage.getItem('authToken');
   const headers = new Headers(init?.headers || {});
@@ -44,6 +47,7 @@ const showAuthModal = (message: string) => {
   document.body.appendChild(modalContainer);
 
   const ModalWrapper = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [open, setOpen] = useState(true);
 
     return <AuthModal open={open} message={message} />;

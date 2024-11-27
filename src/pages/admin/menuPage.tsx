@@ -1,6 +1,6 @@
 import {  useEffect, useRef, useState } from "react";
 import { Button, FormHelperText, TextField } from "@mui/material";
-import { Dashboard, Delete, Edit, Image } from "@mui/icons-material";
+import { Delete, Edit, Image } from "@mui/icons-material";
 
 import Modal from "../../components/Modal";
 
@@ -50,6 +50,7 @@ function DashboardPage() {
         const new_esta = await updateFood(editFood, establishment._id);
         setEstablishment(new_esta);
       } catch (err) {
+        console.error("Error updating food: ", err);
       }
     }
   }
@@ -61,6 +62,7 @@ function DashboardPage() {
         const new_esta = await addFood(newFood, establishment._id);
         setEstablishment(new_esta);
       } catch (err) {
+        console.error("Error adding food: ", err);
       }
     }
   }

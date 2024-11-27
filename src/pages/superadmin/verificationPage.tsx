@@ -8,11 +8,11 @@ import { EstablishmentModel } from "../../models/establishmentModel";
 import { getEstablishments, updateEstablishmentStatus } from "../../handlers/APIController";
 import Modal from "../../components/Modal";
 
-enum Tab {
-  Users,
-  Establishments,
-  Food,
-}
+// enum Tab {
+//   Users,
+//   Establishments,
+//   Food,
+// }
 
 function VerificationPage() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
@@ -131,47 +131,47 @@ function VerificationPage() {
   );
 }
 
-const styles = {
-  table: {
-    maxHeight: '100%',
-    overflowY: 'auto',
-  },
-  selected_button: {
-    borderBottomWidth: 2,
-    borderBottomColor: "black",
-  },
-  section: {
-    marginTop: 5,
-  },
-  button: {
-    borderRadius: 25,
-    width: 150,
-  },
-  text_input: {
-    width: "100%",
-  },
-  header: {
-    fontWeight: "bold",
-    fontSize: 36,
-  },
-  sub_header: {},
-  sidebar: {
-    backgroundColor: "#2673DD",
-    width: 260,
-    color: "white",
-  },
-  selected_sidebar_button: {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)'
-  },
-  sidebar_button: {
-    width: "100%",
-    color: "white",
-    borderRadius: 20
-  },
-  tab_button: {
-    width: "100%",
-    color: "black",
-  },
-};
+// const styles = {
+//   table: {
+//     maxHeight: '100%',
+//     overflowY: 'auto',
+//   },
+//   selected_button: {
+//     borderBottomWidth: 2,
+//     borderBottomColor: "black",
+//   },
+//   section: {
+//     marginTop: 5,
+//   },
+//   button: {
+//     borderRadius: 25,
+//     width: 150,
+//   },
+//   text_input: {
+//     width: "100%",
+//   },
+//   header: {
+//     fontWeight: "bold",
+//     fontSize: 36,
+//   },
+//   sub_header: {},
+//   sidebar: {
+//     backgroundColor: "#2673DD",
+//     width: 260,
+//     color: "white",
+//   },
+//   selected_sidebar_button: {
+//     backgroundColor: 'rgba(0, 0, 0, 0.2)'
+//   },
+//   sidebar_button: {
+//     width: "100%",
+//     color: "white",
+//     borderRadius: 20
+//   },
+//   tab_button: {
+//     width: "100%",
+//     color: "black",
+//   },
+// };
 
 export default VerificationPage;

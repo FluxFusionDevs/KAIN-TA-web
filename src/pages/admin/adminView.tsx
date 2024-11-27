@@ -1,10 +1,7 @@
-import { useState, CSSProperties, useEffect } from "react";
+import { useState, useEffect } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
-import Modal from "../../components/Modal";
-import TextField from '@mui/material/TextField';
 import { Button } from "@mui/material";
-
 import MenuPage from "./menuPage";
 import './adminView.css'
 import FeedbackView from "./feedbackView";
@@ -13,19 +10,18 @@ import EstablishmentForm from "./createEstablishmentForm";
 import { EstablishmentModel } from "../../models/establishmentModel";
 import { getEstablishment } from "../../handlers/APIController";
 
-enum DashboardState {
-  Idle, IsAdding, IsEditting, IsDeleting, IsSaving
-}
+// enum DashboardState {
+//   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
+// }
 
 enum Tab {
   Dashboard, Menu, Feedbacks
 }
 
 function AdminView() {
-  const [state, setState] = useState<DashboardState>(DashboardState.Idle);
 
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Dashboard);
-  const [user, setUser] = useState<UserModel>();
+  // const [user, setUser] = useState<UserModel>();
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
 
   useEffect(() => {
@@ -33,7 +29,7 @@ function AdminView() {
     if (session_user === null) return;
 
     const user_data: UserModel = JSON.parse(session_user);
-    setUser(user_data);
+    // setUser(user_data);
 
     const fetchData = async () => {
       if (typeof user_data.owned_establishment === 'string') {
@@ -51,10 +47,10 @@ function AdminView() {
     fetchData();
   }, [])
 
-  let sidebar_buttons: React.ReactNode[] = [];
+  const sidebar_buttons: React.ReactNode[] = [];
   for (const key in Tab) {
     if (isNaN(Number(key))) {
-        let cur_tab: Tab = Tab[key as keyof typeof Tab];
+        const cur_tab: Tab = Tab[key as keyof typeof Tab];
         sidebar_buttons.push(
             <Button 
                 onClick={() => setSelectedTab(cur_tab)}
@@ -66,23 +62,23 @@ function AdminView() {
     }
   }
 
-  const user_inputs = [
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="ID" variant="standard" disabled />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Name" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Avatar" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Type" variant="standard" />
-    </div>,
-    <div style={styles.section}>
-      <TextField style={styles.text_input} id="text_input" label="Owned" variant="standard" />
-    </div>,
-  ]
+  // const user_inputs = [
+  //   <div style={styles.section}>
+  //     <TextField style={styles.text_input} id="text_input" label="ID" variant="standard" disabled />
+  //   </div>,
+  //   <div style={styles.section}>
+  //     <TextField style={styles.text_input} id="text_input" label="Name" variant="standard" />
+  //   </div>,
+  //   <div style={styles.section}>
+  //     <TextField style={styles.text_input} id="text_input" label="Avatar" variant="standard" />
+  //   </div>,
+  //   <div style={styles.section}>
+  //     <TextField style={styles.text_input} id="text_input" label="Type" variant="standard" />
+  //   </div>,
+  //   <div style={styles.section}>
+  //     <TextField style={styles.text_input} id="text_input" label="Owned" variant="standard" />
+  //   </div>,
+  // ]
 
   return (
     <div style={styles.background}>

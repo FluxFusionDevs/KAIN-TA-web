@@ -2,14 +2,13 @@ import { Button, FormControl, FormHelperText, InputLabel, TextField } from "@mui
 import { useRef, useState } from "react";
 import {
   emptyEstablishmentForm,
-  EstablishmentModel,
   EstablishmentForm as FormData,
 } from "../../models/establishmentModel";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import Modal from "../../components/Modal";
 
 import "./establishmentForm.css";
-import { Check, Image, MapOutlined, MapRounded, MapSharp } from "@mui/icons-material";
+import { Check, Image, MapSharp } from "@mui/icons-material";
 import { createEstablishment } from "../../handlers/APIController";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -142,7 +141,7 @@ function EstablishmentForm() {
     complete_form.jsonData.owner = user._id;
 
     try {
-      const estab: EstablishmentModel = await createEstablishment(complete_form);
+       await createEstablishment(complete_form);
     } catch (error) {
       console.log(error);
       setError("An Error Has Occured: ");

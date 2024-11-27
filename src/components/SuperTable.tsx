@@ -1,7 +1,5 @@
-import { Button } from "@mui/material";
 import React, { useState } from "react";
 import "./SuperTable.css";
-import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import Modal from "./Modal";
 
 export type CellType = "IMAGE" | "VALUE" | "HEADER" | "ID";
@@ -53,7 +51,7 @@ const SuperTable: React.FC<SuperTableProps> = ({ data, buttons }) => {
 					const className = (index % 2) === 0 ? "row" : "row odd-row";
 					const selectedClass = selected === index ? "selected" : "";
 					return <div key={index} className={[className].join(" ")} onClick={() => setSelected(index)}>
-						{item.map((item2, index2) => {
+						{item.map((item2) => {
 							if (item2.type !== "ID") {
 								const headerClass = item2.type === "HEADER" ? "header" : "";
 							const cellClasses = ["cell", selectedClass, headerClass].join(" ");
