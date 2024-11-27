@@ -3,6 +3,7 @@ import { UserModel, UserPayload } from "../models/userModel";
 import { EstablishmentForm, EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
 import { Food } from "../models/foodModel";
 import { PaymentModel, PaymentStatus } from "../models/paymentModel";
+import fetchWrapper from "../interceptor/fetchWrapper";
 
 const hostURL = import.meta.env.VITE_API_URL;
 // const hostURL = "http://localhost:3000";
@@ -25,12 +26,12 @@ export const loginWithEmail = async (email: string, password: string): Promise<U
     },
     body: JSON.stringify(requestBody),
   });
-
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-
   const data: string = await response.json();
+  console.log(data);
+  sessionStorage.setItem('authToken', data);
   return jwtDecode<UserPayload>(data);
 };
 
@@ -54,7 +55,7 @@ export const createEstablishment = async (form: EstablishmentForm): Promise<Esta
   formData.append('documentName', form.documentName);
   formData.append('establishmentImage', form.establishmentImage);
 
-  const response = await fetch(`${apiURL}`, {
+  const response = await fetchWrapper(`${apiURL}`, {
     method: "POST",
     body: formData
   });
@@ -76,7 +77,7 @@ export const getEstablishment = async (owner_id: string): Promise<EstablishmentM
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}?_id=${owner_id}`, {
+  const response = await fetchWrapper(`${apiURL}?_id=${owner_id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -98,7 +99,7 @@ export const getEstablishments = async (): Promise<EstablishmentModel[]> => {
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}/api/establishments/get-establishments`, {
+  const response = await fetchWrapper(`${apiURL}/api/establishments/get-establishments`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -110,7 +111,6 @@ export const getEstablishments = async (): Promise<EstablishmentModel[]> => {
   }
 
   const data: EstablishmentModel[] = await response.json();
-  console.log(data);
   return data;
 }
 
@@ -120,7 +120,7 @@ export const deleteFood = async (food_id: string, establishment_id: string): Pro
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(apiURL, {
+  const response = await fetchWrapper(apiURL, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -131,7 +131,6 @@ export const deleteFood = async (food_id: string, establishment_id: string): Pro
     })
   });
 
-  console.log(response);
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -156,7 +155,7 @@ export const addFood = async (food: Food, establishment_id: string): Promise<Est
   formData.append('price', food.price.toString());
   formData.append('establishmentId', establishment_id);
 
-  const response = await fetch(`${apiURL}`, {
+  const response = await fetchWrapper(`${apiURL}`, {
     method: "POST",
     body: formData
   });
@@ -191,7 +190,7 @@ export const updateFood = async (food: Food, establishment_id: string): Promise<
   formData.append('establishmentId', establishment_id);
   formData.append('foodItemId', food._id);
 
-  const response = await fetch(`${apiURL}`, {
+  const response = await fetchWrapper(`${apiURL}`, {
     method: "PUT",
     body: formData
   });
@@ -216,7 +215,7 @@ export const getPayments = async (): Promise<PaymentModel[]> => {
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}/api/payments/get-all-payments`, {
+  const response = await fetchWrapper(`${apiURL}/api/payments/get-all-payments`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -238,7 +237,7 @@ export const updatePayment = async (payment_id: string, status: PaymentStatus): 
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}/api/payments/update-status`, {
+  const response = await fetchWrapper(`${apiURL}/api/payments/update-status`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -263,7 +262,7 @@ export const updateEstablishmentStatus = async (_id: string, status: Establishme
   if (!hostURL)
     throw new Error("API URL is not defined in the environment variables.");
 
-  const response = await fetch(`${apiURL}`, {
+  const response = await fetchWrapper(`${apiURL}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -278,4 +277,9 @@ export const updateEstablishmentStatus = async (_id: string, status: Establishme
   const data: EstablishmentModel = await response.json();
 
   return data;
+}
+
+export const Logout = async () => {
+  sessionStorage.removeItem('authToken');
+  window.location.href = '/';
 }
