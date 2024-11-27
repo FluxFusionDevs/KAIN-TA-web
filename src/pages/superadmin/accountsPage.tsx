@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, CircularProgress, hexToRgb } from "@mui/material";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import "./accountsPage.css";
 import { ThumbDown } from "@mui/icons-material";
 import { getPayments, updatePayment } from "../../handlers/APIController";
 import { PaymentModel } from "../../models/paymentModel";
-import { EstablishmentModel } from "../../models/establishmentModel";
-import { UserModel } from "../../models/userModel";
 import Modal from "../../components/Modal";
 
-function AccountsPage() {
+function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const [payments, setPayments] = useState<PaymentModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,10 +38,13 @@ function AccountsPage() {
   useEffect(() => {
     const fetchEstablishment = async () => {
       try {
+        setIsLoading(true);
         const data = await getPayments();
         const filtered = data.filter((payment) => payment.status === "PENDING");
         setPayments(filtered);
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         console.error("Error parsing user:", error);
       }
     };
@@ -51,7 +52,23 @@ function AccountsPage() {
     if (!isLoading) {
       fetchEstablishment();
     }
-  }, [isLoading]);
+  }, []);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = imageUrl;
+    img.onload = () => {
+      setSelectedImage(imageUrl);
+    };
+  }, [imageUrl]);
+
+  if (isLoading) {
+    return (
+      <div style={styles.spinnerContainer}>
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="verification-wrapper">
@@ -180,7 +197,14 @@ function AccountsPage() {
     </div>
   );
 }
+
 const styles = {
+  spinnerContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "80vh",
+  },
   table: {
     maxHeight: "100%",
     overflowY: "auto",
