@@ -1,31 +1,59 @@
-import { useState } from 'react'
-import { Button, TextField, IconButton } from '@mui/material';
+import React, { useState } from 'react'
+import { Button, TextField, IconButton, Snackbar } from '@mui/material';
 import background from './assets/images/background.png'
 import { Apple, Delete, Google } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { loginWithEmail } from './handlers/APIController';
 import { UserPayload, UserType } from './models/userModel';
+import CloseIcon from '@mui/icons-material/Close';
 
 function Login() {
     const navigate = useNavigate();
     const [count, setCount] = useState(0)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errors, setErrors] = useState("");
 
     const handleLogin = async () => {
-      const data: UserPayload = await loginWithEmail(email, password);
-      
-      sessionStorage.setItem("user", JSON.stringify(data.user));
+      try {
+        const data: UserPayload = await loginWithEmail(email, password);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      if (data.user.type === "OWNER") {
-        navigate('/admin');
-      } else if (data.user.type === "ADMIN") {
-        navigate('/superadmin');
+        if (data.user.type === "OWNER") {
+          navigate('/admin');
+        } else if (data.user.type === "ADMIN") {
+          navigate('/superadmin');
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setErrors(err.message);
+        }
+
+        return;
       }
     }
 
+    const action = (
+      <React.Fragment>
+        <IconButton
+          size="small"
+          aria-label="close"
+          color="inherit"
+          onClick={() => setErrors("")}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </React.Fragment>
+    );
+
   return (
     <div style={styles.background}>
+      <Snackbar
+        open={errors !== ""}
+        autoHideDuration={6000}
+        onClose={() => setErrors("")}
+        message={errors}
+        action={action}
+      />
       <div style={styles.modal}>
         <div style={{...styles.container, ...{textAlign: 'center'}}}>
           <div style={styles.header}>

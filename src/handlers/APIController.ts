@@ -4,6 +4,12 @@ import { EstablishmentForm, EstablishmentModel, EstablishmentStatus } from "../m
 import { Food } from "../models/foodModel";
 import { PaymentModel, PaymentStatus } from "../models/paymentModel";
 
+type LoginError = {
+  message: string,
+  status: string,
+  stack: string,
+}
+
 const hostURL = import.meta.env.VITE_API_URL;
 // const hostURL = "http://localhost:3000";
 
@@ -27,7 +33,8 @@ export const loginWithEmail = async (email: string, password: string): Promise<U
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const response_error: LoginError = await response.json();
+    throw new Error(response_error.message);
   }
 
   const data: string = await response.json();
