@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Button, TextField, IconButton, Snackbar } from '@mui/material';
 import background from './assets/images/background.png';
-import { Apple, Delete, Google } from '@mui/icons-material';
+import { Google } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
-import { UserPayload, UserType } from './models/userModel';
+import { UserPayload } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
 
 function Login() {
   const navigate = useNavigate();
-  const [count, setCount] = useState(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState('');
@@ -35,14 +34,7 @@ function Login() {
 
   const handleLoginGoogle = async () => {
     try {
-      const data: UserPayload = await loginWithGoogle();
-      sessionStorage.setItem('user', JSON.stringify(data.user));
-
-      if (data.user.type === 'OWNER') {
-        navigate('/admin');
-      } else if (data.user.type === 'ADMIN') {
-        navigate('/superadmin');
-      }
+      loginWithGoogle();
     } catch (err) {
       if (err instanceof Error) {
         setErrors(err.message);

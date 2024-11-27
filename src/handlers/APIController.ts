@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { UserModel, UserPayload } from "../models/userModel";
+import { UserPayload } from "../models/userModel";
 import { EstablishmentForm, EstablishmentModel, EstablishmentStatus } from "../models/establishmentModel";
 import { Food } from "../models/foodModel";
 import { PaymentModel, PaymentStatus } from "../models/paymentModel";
@@ -286,7 +286,7 @@ export const updateEstablishmentStatus = async (_id: string, status: Establishme
   return data;
 }
 
-export const loginWithGoogle = (): void => {
+export const loginWithGoogle =  (): void => {
   const apiURL = `${hostURL}/auth/google`;
 
   if (!hostURL) {

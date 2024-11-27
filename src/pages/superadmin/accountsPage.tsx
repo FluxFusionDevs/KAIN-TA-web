@@ -1,30 +1,30 @@
-import { useEffect, useState } from "react";
-import { Button, CircularProgress, hexToRgb } from "@mui/material";
-import ThumbUp from "@mui/icons-material/ThumbUp";
-import "./accountsPage.css";
-import { ThumbDown } from "@mui/icons-material";
-import { getPayments, updatePayment } from "../../handlers/APIController";
-import { PaymentModel } from "../../models/paymentModel";
-import Modal from "../../components/Modal";
+import { useEffect, useState } from 'react';
+import { Button, CircularProgress } from '@mui/material';
+import ThumbUp from '@mui/icons-material/ThumbUp';
+import './accountsPage.css';
+import { ThumbDown } from '@mui/icons-material';
+import { getPayments, updatePayment } from '../../handlers/APIController';
+import { PaymentModel } from '../../models/paymentModel';
+import Modal from '../../components/Modal';
 
-function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
+function AccountsPage({ imageUrl }: { imageUrl?: string }) {
   const [selectedRow, setSelectedRow] = useState<number>(0);
   const [payments, setPayments] = useState<PaymentModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const [modalType, setModalType] = useState<string>("");
+  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [modalType, setModalType] = useState<string>('');
 
   const handleReject = async (id: string) => {
     setIsLoading(true);
-    const data = await updatePayment(id, "FAILED");
+    const data = await updatePayment(id, 'FAILED');
     console.log(data);
     setIsLoading(false);
   };
 
   const handleApprove = async (id: string) => {
     setIsLoading(true);
-    const data = await updatePayment(id, "COMPLETED");
+    const data = await updatePayment(id, 'COMPLETED');
     console.log(data);
     setIsLoading(false);
   };
@@ -40,12 +40,12 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
       try {
         setIsLoading(true);
         const data = await getPayments();
-        const filtered = data.filter((payment) => payment.status === "PENDING");
+        const filtered = data.filter((payment) => payment.status === 'PENDING');
         setPayments(filtered);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
-        console.error("Error parsing user:", error);
+        console.error('Error parsing user:', error);
       }
     };
 
@@ -55,11 +55,13 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
   }, []);
 
   useEffect(() => {
-    const img = new Image();
-    img.src = imageUrl;
-    img.onload = () => {
-      setSelectedImage(imageUrl);
-    };
+    if (imageUrl) {
+      const img = new Image();
+      img.src = imageUrl;
+      img.onload = () => {
+        setSelectedImage(imageUrl);
+      };
+    }
   }, [imageUrl]);
 
   if (isLoading) {
@@ -75,16 +77,16 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
       <div className="table">
         <div className="content">
           <div className="header row row-header">
-            <div style={{ width: "100%" }}>Name</div>
-            <div style={{ width: "100%" }}>Type</div>
-            <div style={{ width: "100%" }}>Profile Image</div>
-            <div style={{ width: "100%" }}>Price</div>
-            <div style={{ width: "100%" }}>Proof of Payment</div>
-            <div style={{ width: "100%" }}>Action</div>
+            <div style={{ width: '100%' }}>Name</div>
+            <div style={{ width: '100%' }}>Type</div>
+            <div style={{ width: '100%' }}>Profile Image</div>
+            <div style={{ width: '100%' }}>Price</div>
+            <div style={{ width: '100%' }}>Proof of Payment</div>
+            <div style={{ width: '100%' }}>Action</div>
           </div>
           {payments !== undefined
             ? payments.map((item, rowIndex) => {
-                const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
+                const class_name = rowIndex % 2 === 0 ? 'row odd-row' : 'row';
 
                 return (
                   <div
@@ -92,25 +94,27 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
                     onClick={() => setSelectedRow(rowIndex)}
                   >
                     <div>
-                      {typeof item.user === "object"
+                      {typeof item.user === 'object'
                         ? item.user.name
                         : item.user}
                     </div>
                     <div>
                       <div>
-                        {typeof item.user === "object" &&
-                        (!item.user.avatar || item.user.avatar === "") ? (
+                        {typeof item.user === 'object' &&
+                        (!item.user.avatar || item.user.avatar === '') ? (
                           <div>No Image</div>
                         ) : (
-                          typeof item.user === "object" && (
+                          typeof item.user === 'object' && (
                             <a
                               href="#"
                               onClick={() =>
                                 handleImageClick(
                                   `${import.meta.env.VITE_API_URL}${
-                                    item.user.avatar
+                                    typeof item.user === 'object'
+                                      ? (item.user.avatar ?? '')
+                                      : ''
                                   }`,
-                                  "profile"
+                                  'profile'
                                 )
                               }
                             >
@@ -129,7 +133,7 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
                             `${import.meta.env.VITE_API_URL}${
                               item.proofOfPayment
                             }`,
-                            "proof"
+                            'proof'
                           )
                         }
                       >
@@ -142,7 +146,7 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
                           <div className="reject-button">
                             <Button
                               sx={{
-                                backgroundColor: "#dc3545",
+                                backgroundColor: '#dc3545',
                               }}
                               disabled={isLoading}
                               onClick={() => handleReject(item._id)}
@@ -157,7 +161,7 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
                             <Button
                               onClick={() => handleApprove(item._id)}
                               sx={{
-                                backgroundColor: "#28a745",
+                                backgroundColor: '#28a745',
                               }}
                               disabled={isLoading}
                               className="button"
@@ -181,15 +185,15 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
         <Modal
           disableButtons
           header={
-            modalType === "profile" ? "Profile Image" : "Proof of Payment"
+            modalType === 'profile' ? 'Profile Image' : 'Proof of Payment'
           }
           contentStyle={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           content={
-            <img src={selectedImage} alt="Preview" style={{ width: "50%" }} />
+            <img src={selectedImage} alt="Preview" style={{ width: '50%' }} />
           }
           onCancel={() => setIsModalOpen(false)}
         />
@@ -200,18 +204,18 @@ function AccountsPage({ imageUrl }: { imageUrl: string | undefined }) {
 
 const styles = {
   spinnerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "80vh",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '80vh',
   },
   table: {
-    maxHeight: "100%",
-    overflowY: "auto",
+    maxHeight: '100%',
+    overflowY: 'auto',
   },
   selected_button: {
     borderBottomWidth: 2,
-    borderBottomColor: "black",
+    borderBottomColor: 'black',
   },
   section: {
     marginTop: 5,
@@ -221,29 +225,29 @@ const styles = {
     width: 150,
   },
   text_input: {
-    width: "100%",
+    width: '100%',
   },
   header: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 36,
   },
   sub_header: {},
   sidebar: {
-    backgroundColor: "#2673DD",
+    backgroundColor: '#2673DD',
     width: 260,
-    color: "white",
+    color: 'white',
   },
   selected_sidebar_button: {
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   sidebar_button: {
-    width: "100%",
-    color: "white",
+    width: '100%',
+    color: 'white',
     borderRadius: 20,
   },
   tab_button: {
-    width: "100%",
-    color: "black",
+    width: '100%',
+    color: 'black',
   },
 };
 

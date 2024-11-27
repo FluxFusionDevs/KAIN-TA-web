@@ -1,4 +1,4 @@
-import { useState, CSSProperties } from "react";
+import { useState } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
 import { Button } from "@mui/material";
@@ -10,11 +10,11 @@ import AccountsPage from "./accountsPage";
 import DashboardPage from "./dashboardPage";
 import { Logout } from "../../handlers/APIController";
 
-enum Tab {
-  Users,
-  Establishments,
-  Food,
-}
+// enum Tab {
+//   Users,
+//   Establishments,
+//   Food,
+// }
 
 enum SidebarTab {
   Verification,
