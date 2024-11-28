@@ -7,6 +7,8 @@ import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
 import { UserPayload } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
 
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -32,17 +34,9 @@ function Login() {
     }
   };
 
-  const handleLoginGoogle = async () => {
-    try {
-      loginWithGoogle();
-    } catch (err) {
-      if (err instanceof Error) {
-        setErrors(err.message);
-      }
-
-      return;
-    }
-  };
+  const handleLoginGoogle = useGoogleLogin({
+    onSuccess: tokenResponse => console.log(tokenResponse),
+  });
 
   const action = (
     <React.Fragment>
