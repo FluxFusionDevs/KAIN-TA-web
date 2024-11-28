@@ -7,7 +7,12 @@ import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
 import { UserPayload } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+import {
+  GoogleLogin,
+  TokenResponse,
+  useGoogleLogin,
+} from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const navigate = useNavigate();
@@ -35,8 +40,38 @@ function Login() {
   };
 
   const handleLoginGoogle = useGoogleLogin({
-    onSuccess: tokenResponse => console.log(tokenResponse),
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Get user info using access token
+        const userInfoResponse = await fetch(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          }
+        );
+        const userInfo = await userInfoResponse.json();
+
+        const user = await loginWithGoogle(userInfo.sub);
+        sessionStorage.setItem('user', JSON.stringify(user.user));
+
+        if (user.user.type === 'OWNER') {
+          navigate('/admin');
+        } else if (user.user.type === 'ADMIN') {
+          navigate('/superadmin');
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setErrors(err.message);
+        }
+      }
+    },
+    onError: (error) => {
+      const errorMessage =
+        error.error_description || error.error || 'Google login failed';
+      setErrors(`Authentication error: ${errorMessage}`);
+    },
   });
+
 
   const action = (
     <React.Fragment>
