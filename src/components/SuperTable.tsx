@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./SuperTable.css";
 import Modal from "./Modal";
+import { CircularProgress } from "@mui/material";
 
 export type CellType = "IMAGE" | "VALUE" | "HEADER" | "ID";
 
@@ -83,8 +84,11 @@ const SuperTable: React.FC<SuperTableProps> = ({ data, buttons }) => {
 							</div>
 							) : null }
 					</div>;
-				})
-				}
+		})}
+
+		{data.length < 1 ? <div style={{paddingTop: 25}}>
+			<CircularProgress />
+		</div> : null}
       </div>
     </div>
   );

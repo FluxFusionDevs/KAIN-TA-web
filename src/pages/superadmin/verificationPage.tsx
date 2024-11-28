@@ -7,12 +7,7 @@ import './verificationPage.css';
 import { EstablishmentModel } from "../../models/establishmentModel";
 import { getEstablishments, updateEstablishmentStatus } from "../../handlers/APIController";
 import Modal from "../../components/Modal";
-
-// enum Tab {
-//   Users,
-//   Establishments,
-//   Food,
-// }
+import SuperTable, { CellType, SuperCell } from "../../components/SuperTable";
 
 function VerificationPage() {
   const [selectedRow, setSelectedRow] = useState<number>(0);
@@ -20,6 +15,7 @@ function VerificationPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [tableData, setTableData] = useState<SuperCell[][]>();
 
   const handleReject = async (id: string) => {
     setIsLoading(true);
@@ -39,6 +35,32 @@ function VerificationPage() {
   }
 
   useEffect(() => {
+    // Set table data
+    const headers: SuperCell[] = [
+      { type: 'ID', value: '_id' },
+      { type: 'HEADER', value: 'Name' },
+      { type: 'HEADER', value: 'Type' },
+      { type: 'HEADER', value: 'Profile Image' },
+      { type: 'HEADER', value: 'Documents' },
+      { type: 'HEADER', value: 'Action' },
+    ];
+
+    if (establishments !== undefined) {
+      const data: SuperCell[][] = [
+        headers, // Add the headers as the first row
+        ...establishments.map((item) => [
+          { type: 'ID' as CellType, value: item._id as string },
+          { type: 'VALUE' as CellType, value: item.name as string },
+          { type: 'VALUE' as CellType, value: item.quisines.join(', ') as string },
+          { type: 'IMAGE' as CellType, value: `${import.meta.env.VITE_API_URL}${item.image}` },
+        ]),
+      ];
+
+      setTableData(data);
+    }
+  }, [establishments]);
+
+  useEffect(() => {
     const fetchEstablishment = async () => {
       try {
         const data = await getEstablishments();      
@@ -56,68 +78,29 @@ function VerificationPage() {
 
   return (
     <div className="verification-wrapper">
-      <div className="table">
-        <div className="content">
-          <div className="header row row-header">
-            <div style={{ width: "100%" }}>Name</div>
-            <div style={{ width: "100%" }}>Type</div>
-            <div style={{ width: "100%" }}>Profile Image</div>
-            <div style={{ width: "100%" }}>Documents</div>
-            <div style={{ width: "100%" }}>Action</div>
-          </div>
-          {establishments !== undefined ? 
-            establishments.map((item, rowIndex) => {
-              const class_name = rowIndex % 2 === 0 ? "row odd-row" : "row";
-
-              return (
-                <div className={class_name} onClick={() => setSelectedRow(rowIndex)} key={item._id}>
-                  <div>{item.name}</div>
-                  <div>{item.quisines.join(', ')}</div>
-                  <div>
-                    {item.image === "" ? 
-                      <div>No Image</div> : 
-                      <span onClick={() => handleImageClick(`${import.meta.env.VITE_API_URL}${item.image}`)}>See Image</span>
-                    }
-                  </div>
-                  <div>
-                    {item.documents.map((doc, index) => (
-                      <span key={index} onClick={() => handleImageClick(`${import.meta.env.VITE_API_URL}${doc.image}`)}>Click to View</span>
-                    ))}
-                  </div>
-                  <div>
-                    {selectedRow === rowIndex ? (
-                      <div className="action-buttons">
-                        <div className="reject-button">
-                          <Button 
-                            disabled={isLoading}
-                            onClick={() => handleReject(item._id)}
-                            sx={{ backgroundColor: "#dc3545" }}
-                            className="button" 
-                            variant="contained" 
-                            startIcon={<ThumbDown />}>
-                            Reject
-                          </Button>
-                        </div>
-                        <div className="approve-button">
-                          <Button 
-                            disabled={isLoading}
-                            onClick={() => handleApprove(item._id)}
-                            sx={{ backgroundColor: "#28a745" }}
-                            className="button"
-                            variant="contained" 
-                            startIcon={<ThumbUp />}>
-                            Approve
-                          </Button>
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              )
-            })
-          : null} 
-        </div>
-      </div>
+      <SuperTable 
+        data={tableData ?? []} 
+        buttons={(row_id) => [
+          <Button 
+            disabled={isLoading}
+            onClick={() => handleReject(row_id)}
+            sx={{ backgroundColor: "#dc3545" }}
+            className="button" 
+            variant="contained" 
+            startIcon={<ThumbDown />}>
+            Reject
+          </Button>,
+          <Button 
+            disabled={isLoading}
+            onClick={() => handleApprove(row_id)}
+            sx={{ backgroundColor: "#28a745" }}
+            className="button"
+            variant="contained" 
+            startIcon={<ThumbUp />}>
+            Approve
+          </Button>
+        ]}
+        />
       {isModalOpen && (
         <Modal 
         disableButtons
