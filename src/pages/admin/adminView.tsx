@@ -8,7 +8,7 @@ import FeedbackView from "./feedbackView";
 import { UserModel } from "../../models/userModel";
 import EstablishmentForm from "./createEstablishmentForm";
 import { EstablishmentModel } from "../../models/establishmentModel";
-import { getEstablishment } from "../../handlers/APIController";
+import { getEstablishment, validateToken } from "../../handlers/APIController";
 
 // enum DashboardState {
 //   Idle, IsAdding, IsEditting, IsDeleting, IsSaving
@@ -25,6 +25,7 @@ function AdminView() {
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
 
   useEffect(() => {
+    validateToken();
     const session_user = sessionStorage.getItem('user');
     if (session_user === null) return;
 

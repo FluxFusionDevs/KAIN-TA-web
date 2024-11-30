@@ -8,7 +8,6 @@ import {
 import { Food } from '../models/foodModel';
 import { PaymentModel, PaymentStatus } from '../models/paymentModel';
 import fetchWrapper from '../interceptor/fetchWrapper';
-import { CredentialResponse, TokenResponse } from '@react-oauth/google';
 
 type LoginError = {
   message: string;
@@ -348,6 +347,36 @@ export const loginWithGoogle = async (
       throw new Error(`Google login failed: ${error.message}`);
     }
     throw new Error('An unexpected error occurred during Google login');
+  }
+};
+
+export const validateToken = async (): Promise<void> => {
+  const apiURL = `${hostURL}/auth/validate-token`;
+  const token = sessionStorage.getItem('authToken') ?? 'error';
+
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  try {
+    const response = await fetchWrapper(apiURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Token validation failed with status: ${response.status}`
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Token validation failed: ${error.message}`);
+    }
+    throw new Error('An unexpected error occurred during token validation');
   }
 };
 
