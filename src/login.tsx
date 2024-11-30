@@ -6,13 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
 import { UserPayload } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
-
 import {
-  GoogleLogin,
-  TokenResponse,
   useGoogleLogin,
 } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 
 function Login() {
   const navigate = useNavigate();
