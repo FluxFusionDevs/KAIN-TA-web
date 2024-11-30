@@ -352,18 +352,11 @@ export const loginWithGoogle = async (
 
 export const validateToken = async (): Promise<void> => {
   const apiURL = `${hostURL}/auth/validate-token`;
-  const token = sessionStorage.getItem('authToken') ?? 'error';
-
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
-
   try {
     const response = await fetchWrapper(apiURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
       },
     });
 
