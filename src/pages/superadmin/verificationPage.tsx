@@ -10,11 +10,11 @@ import Modal from "../../components/Modal";
 import SuperTable, { CellType, SuperCell } from "../../components/SuperTable";
 
 function VerificationPage() {
-  const [selectedRow, setSelectedRow] = useState<number>(0);
+  // const [selectedRow, setSelectedRow] = useState<number>(0);
   const [establishments, setEstablishments] = useState<EstablishmentModel[]>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [selectedImage] = useState<string>("");
   const [tableData, setTableData] = useState<SuperCell[][]>();
 
   const handleReject = async (id: string) => {
@@ -29,10 +29,10 @@ function VerificationPage() {
     setIsLoading(false);
   }
 
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
-    setIsModalOpen(true);
-  }
+  // const handleImageClick = (imageUrl: string) => {
+  //   setSelectedImage(imageUrl);
+  //   setIsModalOpen(true);
+  // }
 
   useEffect(() => {
     // Set table data
