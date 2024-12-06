@@ -45,6 +45,8 @@ function VerificationPage() {
       { type: 'HEADER', value: 'Action' },
     ];
 
+    
+
     if (establishments !== undefined) {
       const data: SuperCell[][] = [
         headers, // Add the headers as the first row
@@ -52,7 +54,7 @@ function VerificationPage() {
           { type: 'ID' as CellType, value: item._id as string },
           { type: 'VALUE' as CellType, value: item.name as string },
           { type: 'VALUE' as CellType, value: item.quisines.join(', ') as string },
-          { type: 'IMAGE' as CellType, value: `${import.meta.env.VITE_API_URL}${item.image}` },
+          { type: 'IMAGE' as CellType, value: `${item.images[0]}` },
         ]),
       ];
 
