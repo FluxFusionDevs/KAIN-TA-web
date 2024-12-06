@@ -61,7 +61,7 @@ export const createEstablishment = async (
     throw new Error('Document Image is Required');
   }
 
-  if (form.establishmentImage === undefined) {
+  if (form.establishmentImages === undefined) {
     throw new Error('Establishment Image is Required');
   }
 
@@ -69,7 +69,13 @@ export const createEstablishment = async (
   formData.append('jsonData', JSON.stringify(form.jsonData));
   formData.append('documentImage', form.documentImage);
   formData.append('documentName', form.documentName);
-  formData.append('establishmentImage', form.establishmentImage);
+  form.establishmentImages.forEach((file, index) => {
+    formData.append(`establishmentImage[${index}]`, file);
+  });
+
+  for (const [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
 
   const response = await fetchWrapper(`${apiURL}`, {
     method: 'POST',

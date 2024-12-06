@@ -1,0 +1,18 @@
+.super-dashboard-wrapper {
+  margin-top: 50px;
+}
+
+.super-dashboard-wrapper .section {
+  margin-top: 10px;
+  flex: 1;
+  height: 100px;
+}
+
+.super-dashboard-wrapper .row {
+  flex-direction: row;
+  display: flex;
+}
+
+.super-dashboard-wrapper .section .header {
+  font-weight: 700;
+}
