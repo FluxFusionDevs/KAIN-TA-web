@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import background from "../../assets/images/background.png";
 import logo from "../../assets/images/kain-ta-Logo.png";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import MenuPage from "./menuPage";
 import './adminView.css'
 import FeedbackView from "./feedbackView";
@@ -108,18 +108,20 @@ function AdminView() {
             paddingRight: 35,
             overflow: "auto",
           }}>
-            {!establishment || (establishment !== undefined && establishment.status !== "APPROVED") ? 
-            (<EstablishmentForm />) : null}
 
-            {
-            selectedTab === Tab.Menu && (
-              <MenuPage />
-            )}
+            {establishment === undefined ? (
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <CircularProgress />
+                </div>
+              ) : establishment.status !== "APPROVED" ? (
+                <EstablishmentForm />
+              ) : (
+                <>
+                  {selectedTab === Tab.Menu && <MenuPage />}
+                  {selectedTab === Tab.Feedbacks && <FeedbackView />}
+                </>
+              )}
 
-            {
-            selectedTab === Tab.Feedbacks && (
-              <FeedbackView />
-            )}
           </div>
         </div>
       </div>
