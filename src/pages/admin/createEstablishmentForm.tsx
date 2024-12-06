@@ -333,6 +333,7 @@ function EstablishmentForm() {
           label="Business Email"
           variant="standard"
         />
+        </div>
         <div className="section">
           <TextField
             onChange={(event) => {
@@ -344,7 +345,6 @@ function EstablishmentForm() {
             variant="standard"
           />
         </div>
-      </div>
       <div className="section">
         <TextField
           onChange={(event) => {
