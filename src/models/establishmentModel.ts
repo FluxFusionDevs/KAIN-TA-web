@@ -38,7 +38,7 @@ export type EstablishmentModel = {
     owner: string;
     status: EstablishmentStatus;
     documents: Documents[];
-    image: string;
+    images: string[];
     createdAt: string;
     updatedAt: string;
 }
@@ -58,7 +58,8 @@ export const emptyEstablishmentForm: EstablishmentForm = {
     operating_hours: "",
     ratings: [],
     owner: "",
-    image: "",
+    images: [],
+    address: "",
     },
     documentImage: undefined,
     establishmentImage: undefined,
@@ -73,7 +74,8 @@ export type EstablishmentForm = {
             type: string,
             coordinates: number[],
         },
-        image: string,
+        images: string[],
+        address: string,
         menu_items: [],
         contact_number: string,
         email: string,
@@ -84,7 +86,7 @@ export type EstablishmentForm = {
     },
     documentImage?: File,
     documentName: string,
-    establishmentImage?: File,
+    establishmentImage?: FileList
 }
 
 // {
