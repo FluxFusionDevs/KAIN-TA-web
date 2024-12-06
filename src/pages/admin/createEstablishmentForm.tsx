@@ -5,7 +5,7 @@ import {
   InputLabel,
   TextField,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   emptyEstablishmentForm,
   EstablishmentForm as FormData,
