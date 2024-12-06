@@ -110,6 +110,12 @@ function EstablishmentForm() {
       return;
     }
 
+    if (form.jsonData.address === '') {
+      setIsLoading(false);
+      setError('Address field is required');
+      return;
+    }
+
     if (form.jsonData.quisines.length < 1) {
       setIsLoading(false);
       setError('Quisines field is required');
@@ -163,13 +169,12 @@ function EstablishmentForm() {
     } catch (error) {
       console.log(error);
       setError('An Error Has Occured: ');
-      return;
     }
 
     setIsLoading(false);
     setCompleteModal(true);
     setForm(emptyEstablishmentForm);
-  };
+  };;
 
   console.log(form.jsonData.location.coordinates.length);
 
@@ -260,6 +265,8 @@ function EstablishmentForm() {
             };
 
             setForm(cur_data);
+            //close modal
+            setLocationSelect(false);
           }}
           content={mapComponent()}
           contentStyle={{ display: 'block', padding: 25 }}
@@ -291,11 +298,12 @@ function EstablishmentForm() {
         id="file"
         style={{ display: 'none' }}
         accept="image/*"
+        multiple
         onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) {
-            const cur_data: FormData = { ...form };
-            cur_data.establishmentImages.push(file);
+          const files = event.target.files;
+          if (files && files.length > 0) {
+            const cur_data = { ...form };
+            cur_data.establishmentImage = files;
             setForm(cur_data);
           }
         }}
@@ -354,7 +362,18 @@ function EstablishmentForm() {
           label="Business Email"
           variant="standard"
         />
-      </div>
+        </div>
+        <div className="section">
+          <TextField
+            onChange={(event) => {
+              const cur_data: FormData = { ...form };
+              cur_data.jsonData.address = event.target.value;
+              setForm(cur_data);
+            }}
+            label="Address"
+            variant="standard"
+          />
+        </div>
       <div className="section">
         <TextField
           onChange={(event) => {

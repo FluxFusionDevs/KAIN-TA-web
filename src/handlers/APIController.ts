@@ -69,14 +69,12 @@ export const createEstablishment = async (
   formData.append('jsonData', JSON.stringify(form.jsonData));
   formData.append('documentImage', form.documentImage);
   formData.append('documentName', form.documentName);
-  form.establishmentImages.forEach((file, index) => {
-    formData.append(`establishmentImage[${index}]`, file);
-  });
 
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-
+  const files = Array.from(form.establishmentImage);
+  files.forEach((file: File) => {
+    formData.append('establishmentImage', file);
+  });  
+  
   const response = await fetchWrapper(`${apiURL}`, {
     method: 'POST',
     body: formData,
@@ -295,7 +293,6 @@ export const updatePayment = async (
   const data: PaymentModel = await response.json();
   return data;
 };
-
 export const updateEstablishmentStatus = async (
   _id: string,
   status: EstablishmentStatus
@@ -305,12 +302,13 @@ export const updateEstablishmentStatus = async (
   if (!hostURL)
     throw new Error('API URL is not defined in the environment variables.');
 
+  const formData = new FormData();
+  formData.append('_id', _id);
+  formData.append('status', status);
+
   const response = await fetchWrapper(`${apiURL}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ _id, status }),
+    body: formData, // FormData automatically sets correct Content-Type
   });
 
   if (!response.ok) {

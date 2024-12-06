@@ -25,23 +25,23 @@ export type Documents = {
 };
 
 export type EstablishmentModel = {
-  _id: string;
-  name: string;
-  location: Location;
-  menu_items: Food[];
-  contact_number: string;
-  email: string;
-  barangay: string;
-  quisines: string[];
-  operating_hours: string;
-  ratings: Rating[];
-  owner: string;
-  status: EstablishmentStatus;
-  documents: Documents[];
-  image: string;
-  createdAt: string;
-  updatedAt: string;
-};
+    _id: string;
+    name: string;
+    location: Location;
+    menu_items: Food[];
+    contact_number: string;
+    email: string;
+    barangay: string;
+    quisines: string[];
+    operating_hours: string;
+    ratings: Rating[];
+    owner: string;
+    status: EstablishmentStatus;
+    documents: Documents[];
+    images: string[];
+    createdAt: string;
+    updatedAt: string;
+}
 
 export const emptyEstablishmentForm: EstablishmentForm = {
   jsonData: {
@@ -57,35 +57,37 @@ export const emptyEstablishmentForm: EstablishmentForm = {
     quisines: [],
     operating_hours: '',
     ratings: [],
-    owner: '',
-    image: '',
-  },
-  documentImage: undefined,
-  establishmentImages: [],
-  documentName: '',
-};
+    owner: "",
+    images: [],
+    address: "",
+    },
+    documentImage: undefined,
+    establishmentImage: undefined,
+    documentName: "",
+}
 
 export type EstablishmentForm = {
-  jsonData: {
-    name: string;
-    owner: string;
-    location: {
-      type: string;
-      coordinates: number[];
-    };
-    image: string;
-    menu_items: [];
-    contact_number: string;
-    email: string;
-    barangay: string;
-    quisines: string[];
-    operating_hours: string;
-    ratings: [];
-  };
-  documentImage?: File;
-  documentName: string;
-  establishmentImages: File[];
-};
+    jsonData: {
+        name: string,
+        owner: string,
+        location: {
+            type: string,
+            coordinates: number[],
+        },
+        images: string[],
+        address: string,
+        menu_items: [],
+        contact_number: string,
+        email: string,
+        barangay: string,
+        quisines: string[],
+        operating_hours: string,
+        ratings: [],
+    },
+    documentImage?: File,
+    documentName: string,
+    establishmentImage?: FileList
+}
 
 // {
 //     "name": "A really long named establishment",

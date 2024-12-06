@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import background from '../../assets/images/background.png';
 import logo from '../../assets/images/kain-ta-Logo.png';
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import MenuPage from './menuPage';
 import './adminView.css';
 import FeedbackView from './feedbackView';
@@ -110,27 +110,29 @@ function AdminView() {
               </div>
             )}
 
-          <div
-            style={{
-              width: '100%',
-              paddingLeft: 35,
-              paddingRight: 35,
-              overflow: 'auto',
-            }}
-          >
-            {!establishment ||
-            (establishment !== undefined &&
-              establishment.status !== 'APPROVED') ? (
-              <EstablishmentForm />
-            ) : null}
+          <div style={{
+            width: "100%",
+            paddingLeft: 35,
+            paddingRight: 35,
+            overflow: "auto",
+          }}>
 
-            {selectedTab === Tab.Menu && <MenuPage />}
-
-            {selectedTab === Tab.Feedbacks && <FeedbackView />}
-
-            {selectedTab === Tab.Dashboard && establishment && (
+            {establishment === undefined ? (
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                  <CircularProgress />
+                </div>
+              ) : establishment.status !== "APPROVED" ? (
+                <EstablishmentForm />
+              ) : (
+                <>
+                  {selectedTab === Tab.Menu && <MenuPage />}
+                  {selectedTab === Tab.Feedbacks && <FeedbackView />}
+                  {selectedTab === Tab.Dashboard && establishment && (
               <AdminDashboard establishment={establishment} />
             )}
+                </>
+              )}
+
           </div>
         </div>
       </div>
