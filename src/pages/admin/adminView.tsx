@@ -23,6 +23,7 @@ enum Tab {
 
 function AdminView() {
   const [selectedTab, setSelectedTab] = useState<Tab>(Tab.Dashboard);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // const [user, setUser] = useState<UserModel>();
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
 
@@ -35,23 +36,26 @@ function AdminView() {
     // setUser(user_data);
 
     const fetchData = async () => {
-      if (typeof user_data.owned_establishment === 'string') {
-        const fetched_data: EstablishmentModel = await getEstablishment(
-          user_data.owned_establishment
-        );
-        setEstablishment(fetched_data);
-      } else if (user_data.owned_establishment !== null) {
-        setEstablishment(user_data.owned_establishment);
-      } else {
-        setEstablishment(undefined);
+      try {
+        if (typeof user_data.owned_establishment === 'string') {
+          const fetched_data: EstablishmentModel = await getEstablishment(
+            user_data.owned_establishment
+          );
+          setEstablishment(fetched_data);
+        } else if (user_data.owned_establishment !== null) {
+          setEstablishment(user_data.owned_establishment);
+        } else {
+          setEstablishment(undefined);
+        }
+      } catch (error) {
+        console.error('Error fetching establishment:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-      console.log('Test', !establishment);
     };
 
     fetchData();
   }, []);
-
   const sidebar_buttons: React.ReactNode[] = [];
   for (const key in Tab) {
     if (isNaN(Number(key))) {
@@ -110,29 +114,38 @@ function AdminView() {
               </div>
             )}
 
-          <div style={{
-            width: "100%",
-            paddingLeft: 35,
-            paddingRight: 35,
-            overflow: "auto",
-          }}>
-
-            {establishment === undefined ? (
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                  <CircularProgress />
-                </div>
-              ) : establishment.status !== "APPROVED" ? (
-                <EstablishmentForm />
-              ) : (
-                <>
-                  {selectedTab === Tab.Menu && <MenuPage />}
-                  {selectedTab === Tab.Feedbacks && <FeedbackView />}
-                  {selectedTab === Tab.Dashboard && establishment && (
-              <AdminDashboard establishment={establishment} />
+          <div
+            style={{
+              width: '100%',
+              paddingLeft: 35,
+              paddingRight: 35,
+              overflow: 'auto',
+            }}
+          >
+            {isLoading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <CircularProgress />
+              </div>
+            ) : establishment === undefined ? (
+              <EstablishmentForm />
+            ) : establishment.status !== 'APPROVED' ? (
+              <EstablishmentForm />
+            ) : (
+              <>
+                {selectedTab === Tab.Menu && <MenuPage />}
+                {selectedTab === Tab.Feedbacks && <FeedbackView />}
+                {selectedTab === Tab.Dashboard && establishment && (
+                  <AdminDashboard establishment={establishment} />
+                )}
+              </>
             )}
-                </>
-              )}
-
           </div>
         </div>
       </div>
