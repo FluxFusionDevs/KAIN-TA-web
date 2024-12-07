@@ -140,7 +140,7 @@ function EstablishmentForm() {
       return;
     }
 
-    if (form.establishmentImages.length < 1) {
+    if (!form.establishmentImage || form.establishmentImage.length < 1) {
       setIsLoading(false);
       setError('Document Photo field is required');
       return;
@@ -174,7 +174,7 @@ function EstablishmentForm() {
     setIsLoading(false);
     setCompleteModal(true);
     setForm(emptyEstablishmentForm);
-  };;
+  };
 
   console.log(form.jsonData.location.coordinates.length);
 
@@ -362,18 +362,18 @@ function EstablishmentForm() {
           label="Business Email"
           variant="standard"
         />
-        </div>
-        <div className="section">
-          <TextField
-            onChange={(event) => {
-              const cur_data: FormData = { ...form };
-              cur_data.jsonData.address = event.target.value;
-              setForm(cur_data);
-            }}
-            label="Address"
-            variant="standard"
-          />
-        </div>
+      </div>
+      <div className="section">
+        <TextField
+          onChange={(event) => {
+            const cur_data: FormData = { ...form };
+            cur_data.jsonData.address = event.target.value;
+            setForm(cur_data);
+          }}
+          label="Address"
+          variant="standard"
+        />
+      </div>
       <div className="section">
         <TextField
           onChange={(event) => {
@@ -428,19 +428,23 @@ function EstablishmentForm() {
         </Button>
       </div>
       <div className="section">
-        {form.establishmentImages.map((item, index) => {
-          return (
+        {Array.from(form.establishmentImage || []).map(
+          (item: File, index: number) => (
             <a
+              key={index}
               style={{ marginRight: 8 }}
               href="#"
-              onClick={() =>
-                handleImageClick(URL.createObjectURL(item), 'profile')
-              }
+              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.preventDefault();
+                handleImageClick(URL.createObjectURL(item), 'profile');
+              }}
+              role="button"
+              aria-label={`View image ${index + 1}`}
             >
               Image {index + 1}
             </a>
-          );
-        })}
+          )
+        )}
       </div>
       <div className="section">
         <Button

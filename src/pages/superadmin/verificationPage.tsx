@@ -17,15 +17,15 @@ function VerificationPage() {
   const [selectedImage] = useState<string>("");
   const [tableData, setTableData] = useState<SuperCell[][]>();
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: string, email: string) => {
     setIsLoading(true);
-    await updateEstablishmentStatus(id, "REJECTED");
+    await updateEstablishmentStatus(id, "REJECTED", email);
     setIsLoading(false);
   }
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: string, email: string) => {
     setIsLoading(true);
-    await updateEstablishmentStatus(id, "APPROVED");
+    await updateEstablishmentStatus(id, "APPROVED", email);
     setIsLoading(false);
   }
 
@@ -42,6 +42,7 @@ function VerificationPage() {
       { type: 'HEADER', value: 'Type' },
       { type: 'HEADER', value: 'Profile Image' },
       { type: 'HEADER', value: 'Documents' },
+      { type: 'HEADER', value: 'Email' },
       { type: 'HEADER', value: 'Action' },
     ];
 
@@ -54,7 +55,9 @@ function VerificationPage() {
           { type: 'ID' as CellType, value: item._id as string },
           { type: 'VALUE' as CellType, value: item.name as string },
           { type: 'VALUE' as CellType, value: item.quisines.join(', ') as string },
-          { type: 'IMAGE' as CellType, value: `${item.images[0]}` },
+          { type: 'IMAGE' as CellType, value: `${item.images}` },
+          { type: 'IMAGE' as CellType, value: `${item.documents}` },
+          { type: 'EMAIL' as CellType, value: `${item.email}` as string },
         ]),
       ];
 
@@ -82,10 +85,10 @@ function VerificationPage() {
     <div className="verification-wrapper">
       <SuperTable 
         data={tableData ?? []} 
-        buttons={(row_id) => [
+        buttons={(row_id, row_email) => [
           <Button 
             disabled={isLoading}
-            onClick={() => handleReject(row_id)}
+            onClick={() => handleReject(row_id, row_email)}
             sx={{ backgroundColor: "#dc3545" }}
             className="button" 
             variant="contained" 
@@ -94,7 +97,7 @@ function VerificationPage() {
           </Button>,
           <Button 
             disabled={isLoading}
-            onClick={() => handleApprove(row_id)}
+            onClick={() => handleApprove(row_id, row_email)}
             sx={{ backgroundColor: "#28a745" }}
             className="button"
             variant="contained" 
