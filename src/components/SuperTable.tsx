@@ -3,7 +3,7 @@ import './SuperTable.css';
 import Modal from './Modal';
 import { CircularProgress } from '@mui/material';
 
-export type CellType = 'IMAGE' | 'VALUE' | 'HEADER' | 'ID';
+export type CellType = 'IMAGE' | 'VALUE' | 'HEADER' | 'ID' | 'EMAIL';
 
 export type SuperCell = {
   type: CellType;
@@ -12,7 +12,7 @@ export type SuperCell = {
 
 interface SuperTableProps {
   data: SuperCell[][];
-  buttons?: (data_id: string) => JSX.Element[];
+  buttons?: (data_id: string, data_email: string) => JSX.Element[];
 }
 
 const SuperTable: React.FC<SuperTableProps> = ({ data, buttons }) => {
@@ -102,7 +102,7 @@ const SuperTable: React.FC<SuperTableProps> = ({ data, buttons }) => {
                   ].join(' ')}
                   style={{ flex: 1 }}
                 >
-                  {buttons(item.find((i) => i.type === 'ID')?.value as string)}
+                  {buttons(item.find((i) => i.type === 'ID')?.value as string, item.find((i) => i.type === 'EMAIL')?.value as string)}  
                 </div>
               ) : null}
             </div>

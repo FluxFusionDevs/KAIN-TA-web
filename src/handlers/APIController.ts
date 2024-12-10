@@ -82,7 +82,7 @@ export const createEstablishment = async (
     throw new Error('Document Image is Required');
   }
 
-  if (form.establishmentImages === undefined) {
+  if (form.establishmentImage === undefined) {
     throw new Error('Establishment Image is Required');
   }
 
@@ -90,13 +90,11 @@ export const createEstablishment = async (
   formData.append('jsonData', JSON.stringify(form.jsonData));
   formData.append('documentImage', form.documentImage);
   formData.append('documentName', form.documentName);
-  form.establishmentImages.forEach((file, index) => {
-    formData.append(`establishmentImage[${index}]`, file);
-  });
 
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
+  const files = Array.from(form.establishmentImage);
+  files.forEach((file: File) => {
+    formData.append('establishmentImage', file);
+  });
 
   const response = await fetchWrapper(`${apiURL}`, {
     method: 'POST',
@@ -317,29 +315,50 @@ export const updatePayment = async (
   return data;
 };
 
+
 export const updateEstablishmentStatus = async (
   _id: string,
-  status: EstablishmentStatus
+  status: EstablishmentStatus,
+  email: string
 ): Promise<EstablishmentModel> => {
   const apiURL = `${hostURL}/api/establishments/update-establishment`;
+  const emailURL = `${hostURL}/send-notification`;
 
   if (!hostURL)
     throw new Error('API URL is not defined in the environment variables.');
 
-  const response = await fetchWrapper(`${apiURL}`, {
+  // First request - Update establishment status using FormData
+  const formData = new FormData();
+  formData.append('_id', _id);
+  formData.append('status', status);
+
+  const establishmentResponse = await fetchWrapper(`${apiURL}`, {
     method: 'PUT',
+    body: formData, // FormData automatically sets correct Content-Type
+  });
+
+  // Second request - Send email notification using JSON
+  const emailPayload = {
+    subject: 'KAINTA - Establishment Status Update',
+    message: `Your establishment has been ${status.toLowerCase()}`,
+    email: email
+  };
+
+  const emailResponse = await fetch(emailURL, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ _id, status }),
+    body: JSON.stringify(emailPayload),
   });
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  if (!emailResponse.ok) {
+    throw new Error(
+      `Email notification failed! Status: ${emailResponse.status}`
+    );
   }
 
-  const data: EstablishmentModel = await response.json();
-
+  const data: EstablishmentModel = await establishmentResponse.json();
   return data;
 };
 

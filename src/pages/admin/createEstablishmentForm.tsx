@@ -5,7 +5,7 @@ import {
   InputLabel,
   TextField,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   emptyEstablishmentForm,
   EstablishmentForm as FormData,
@@ -110,6 +110,12 @@ function EstablishmentForm() {
       return;
     }
 
+    if (form.jsonData.address === '') {
+      setIsLoading(false);
+      setError('Address field is required');
+      return;
+    }
+
     if (form.jsonData.quisines.length < 1) {
       setIsLoading(false);
       setError('Cuisines field is required');
@@ -134,7 +140,7 @@ function EstablishmentForm() {
       return;
     }
 
-    if (form.establishmentImages.length < 1) {
+    if (!form.establishmentImage || form.establishmentImage.length < 1) {
       setIsLoading(false);
       setError('Document Photo field is required');
       return;
@@ -163,7 +169,6 @@ function EstablishmentForm() {
     } catch (error) {
       console.log(error);
       setError('An Error Has Occured: ');
-      return;
     }
 
     setIsLoading(false);
@@ -260,6 +265,8 @@ function EstablishmentForm() {
             };
 
             setForm(cur_data);
+            //close modal
+            setLocationSelect(false);
           }}
           content={mapComponent()}
           contentStyle={{ display: 'block', padding: 25 }}
@@ -291,11 +298,12 @@ function EstablishmentForm() {
         id="file"
         style={{ display: 'none' }}
         accept="image/*"
+        multiple
         onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) {
-            const cur_data: FormData = { ...form };
-            cur_data.establishmentImages.push(file);
+          const files = event.target.files;
+          if (files && files.length > 0) {
+            const cur_data = { ...form };
+            cur_data.establishmentImage = files;
             setForm(cur_data);
           }
         }}
@@ -359,6 +367,17 @@ function EstablishmentForm() {
         <TextField
           onChange={(event) => {
             const cur_data: FormData = { ...form };
+            cur_data.jsonData.address = event.target.value;
+            setForm(cur_data);
+          }}
+          label="Address"
+          variant="standard"
+        />
+      </div>
+      <div className="section">
+        <TextField
+          onChange={(event) => {
+            const cur_data: FormData = { ...form };
             cur_data.jsonData.quisines = event.target.value.split(',');
             setForm(cur_data);
           }}
@@ -409,19 +428,23 @@ function EstablishmentForm() {
         </Button>
       </div>
       <div className="section">
-        {form.establishmentImages.map((item, index) => {
-          return (
+        {Array.from(form.establishmentImage || []).map(
+          (item: File, index: number) => (
             <a
+              key={index}
               style={{ marginRight: 8 }}
               href="#"
-              onClick={() =>
-                handleImageClick(URL.createObjectURL(item), 'profile')
-              }
+              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                e.preventDefault();
+                handleImageClick(URL.createObjectURL(item), 'profile');
+              }}
+              role="button"
+              aria-label={`View image ${index + 1}`}
             >
               Image {index + 1}
             </a>
-          );
-        })}
+          )
+        )}
       </div>
       <div className="section">
         <Button
