@@ -112,7 +112,7 @@ function EstablishmentForm() {
 
     if (form.jsonData.quisines.length < 1) {
       setIsLoading(false);
-      setError('Quisines field is required');
+      setError('Cuisines field is required');
       return;
     }
 
@@ -362,7 +362,7 @@ function EstablishmentForm() {
             cur_data.jsonData.quisines = event.target.value.split(',');
             setForm(cur_data);
           }}
-          label="Quisines"
+          label="Cuisines"
           placeholder="comma separated (Ex: Filipino,Asian)"
           variant="standard"
         />
