@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress, MenuItem, FormControl } from '@mui/material';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 import './accountsPage.css';
 import { ThumbDown } from '@mui/icons-material';
-import { getPayments, updatePayment } from '../../handlers/APIController';
+import {
+  getAllUsers,
+  getPayments,
+  updatePayment,
+} from '../../handlers/APIController';
 import { PaymentModel } from '../../models/paymentModel';
 import Modal from '../../components/Modal';
+import { UserModel } from '../../models/userModel';
+import { EstablishmentModel } from '../../models/establishmentModel';
 
 function AccountsPage({ imageUrl }: { imageUrl?: string }) {
   const [selectedRow, setSelectedRow] = useState<number>(0);
-  const [payments, setPayments] = useState<PaymentModel[]>([]);
+  const [users, setUsers] = useState<UserModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [modalType, setModalType] = useState<string>('');
+  const [filter, setFilter] = useState<string>('ALL');
 
   const handleReject = async (id: string) => {
     setIsLoading(true);
@@ -39,9 +46,11 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
     const fetchEstablishment = async () => {
       try {
         setIsLoading(true);
-        const data = await getPayments();
-        const filtered = data.filter((payment) => payment.status === 'PENDING');
-        setPayments(filtered);
+        const token = sessionStorage.getItem('authToken');
+        if (!token) return;
+
+        const data = await getAllUsers(token);
+        setUsers(data);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -52,7 +61,7 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
     if (!isLoading) {
       fetchEstablishment();
     }
-  }, []);
+  }, [filter]);
 
   useEffect(() => {
     if (imageUrl) {
@@ -79,13 +88,12 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
           <div className="header row row-header">
             <div style={{ width: '100%' }}>Name</div>
             <div style={{ width: '100%' }}>Type</div>
-            <div style={{ width: '100%' }}>Profile Image</div>
-            <div style={{ width: '100%' }}>Price</div>
-            <div style={{ width: '100%' }}>Proof of Payment</div>
-            <div style={{ width: '100%' }}>Action</div>
+            <div style={{ width: '100%' }}>Avatar</div>
+            <div style={{ width: '100%' }}>Email</div>
+            <div style={{ width: '100%' }}>Owned Establishment ID</div>
           </div>
-          {payments !== undefined
-            ? payments.map((item, rowIndex) => {
+          {users !== undefined
+            ? users.map((item, rowIndex) => {
                 const class_name = rowIndex % 2 === 0 ? 'row odd-row' : 'row';
 
                 return (
@@ -93,86 +101,48 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
                     className={class_name}
                     onClick={() => setSelectedRow(rowIndex)}
                   >
-                    <div>
-                      {typeof item.user === 'object'
-                        ? item.user.name
-                        : item.user}
-                    </div>
+                    <div>{item.name}</div>
+                    <div>{item.type}</div>
                     <div>
                       <div>
-                        {typeof item.user === 'object' &&
-                        (!item.user.avatar || item.user.avatar === '') ? (
-                          <div>No Image</div>
-                        ) : (
-                          typeof item.user === 'object' && (
+                        {item.avatar ? (
+                          item.avatar.includes(
+                            'https://lh3.googleusercontent.com/'
+                          ) ? (
+                            <a
+                              href="#"
+                              onClick={() =>
+                                handleImageClick(item.avatar, 'profile')
+                              }
+                            >
+                              View
+                            </a>
+                          ) : (
                             <a
                               href="#"
                               onClick={() =>
                                 handleImageClick(
-                                  `${import.meta.env.VITE_API_URL}${
-                                    typeof item.user === 'object'
-                                      ? (item.user.avatar ?? '')
-                                      : ''
-                                  }`,
+                                  `${import.meta.env.VITE_API_URL}${item.avatar}`,
                                   'profile'
                                 )
                               }
                             >
-                              Click to View
+                              View
                             </a>
                           )
+                        ) : (
+                          <div>N/A</div>
                         )}
                       </div>
                     </div>
-                    <div>{item.amount} PHP</div>
+                    <div>{item.email}</div>
                     <div>
-                      <a
-                        href="#"
-                        onClick={() =>
-                          handleImageClick(
-                            `${import.meta.env.VITE_API_URL}${
-                              item.proofOfPayment
-                            }`,
-                            'proof'
-                          )
-                        }
-                      >
-                        Click to View
-                      </a>
-                    </div>
-                    <div>
-                      {selectedRow === rowIndex ? (
-                        <div className="action-buttons">
-                          <div className="reject-button">
-                            <Button
-                              sx={{
-                                backgroundColor: '#dc3545',
-                              }}
-                              disabled={isLoading}
-                              onClick={() => handleReject(item._id)}
-                              className="button"
-                              variant="contained"
-                              startIcon={<ThumbDown />}
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                          <div className="approve-button">
-                            <Button
-                              onClick={() => handleApprove(item._id)}
-                              sx={{
-                                backgroundColor: '#28a745',
-                              }}
-                              disabled={isLoading}
-                              className="button"
-                              variant="contained"
-                              startIcon={<ThumbUp />}
-                            >
-                              Approve
-                            </Button>
-                          </div>
-                        </div>
-                      ) : null}
+                      {item.owned_establishment
+                        ? typeof item.owned_establishment === 'string'
+                          ? item.owned_establishment
+                          : (item.owned_establishment as EstablishmentModel)
+                              .name
+                        : 'N/A'}
                     </div>
                   </div>
                 );

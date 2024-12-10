@@ -1,14 +1,15 @@
-import { useState } from "react";
-import background from "../../assets/images/background.png";
-import logo from "../../assets/images/kain-ta-Logo.png";
-import { Button } from "@mui/material";
+import { useState } from 'react';
+import background from '../../assets/images/background.png';
+import logo from '../../assets/images/kain-ta-Logo.png';
+import { Button } from '@mui/material';
 
-import './superadminView.css'
+import './superadminView.css';
 
-import VerificationPage from "./verificationPage";
-import AccountsPage from "./accountsPage";
-import DashboardPage from "./dashboardPage";
-import { Logout } from "../../handlers/APIController";
+import VerificationPage from './verificationPage';
+import AccountsPage from './accountsPage';
+import DashboardPage from './dashboardPage';
+import { Logout } from '../../handlers/APIController';
+import PaymentsPage from './paymentPage';
 
 // enum Tab {
 //   Users,
@@ -19,34 +20,63 @@ import { Logout } from "../../handlers/APIController";
 enum SidebarTab {
   Verification,
   Accounts,
+  Payments,
   Dashboard,
-  Logout
+  Logout,
 }
 
 function SuperadminView() {
-  const [selectedSidebarTab, setSelectedSidebarTab] = useState<SidebarTab>(SidebarTab.Verification);
+  const [selectedSidebarTab, setSelectedSidebarTab] = useState<SidebarTab>(
+    SidebarTab.Verification
+  );
 
   const sidebar_buttons = [
-    <Button 
+    <Button
       onClick={() => setSelectedSidebarTab(SidebarTab.Verification)}
       style={{
-      ...styles.sidebar_button,
-      ...(selectedSidebarTab === SidebarTab.Verification ? styles.selected_sidebar_button : {})
-    }}>Verification</Button>,
-    <Button 
+        ...styles.sidebar_button,
+        ...(selectedSidebarTab === SidebarTab.Verification
+          ? styles.selected_sidebar_button
+          : {}),
+      }}
+    >
+      Verification
+    </Button>,
+    <Button
       onClick={() => setSelectedSidebarTab(SidebarTab.Accounts)}
-      style={{ 
-      ...styles.sidebar_button,
-      ...(selectedSidebarTab === SidebarTab.Accounts ? styles.selected_sidebar_button : {})
-     }}>Accounts</Button>,
-    <Button 
+      style={{
+        ...styles.sidebar_button,
+        ...(selectedSidebarTab === SidebarTab.Accounts
+          ? styles.selected_sidebar_button
+          : {}),
+      }}
+    >
+      Accounts
+    </Button>,
+    <Button
+      onClick={() => setSelectedSidebarTab(SidebarTab.Payments)}
+      style={{
+        ...styles.sidebar_button,
+        ...(selectedSidebarTab === SidebarTab.Payments
+          ? styles.selected_sidebar_button
+          : {}),
+      }}
+    >
+      Payments
+    </Button>,
+    <Button
       onClick={() => setSelectedSidebarTab(SidebarTab.Dashboard)}
       style={{
-      ...styles.sidebar_button,
-      ...(selectedSidebarTab === SidebarTab.Dashboard ? styles.selected_sidebar_button : {})
-    }}>Dashboard</Button>,
+        ...styles.sidebar_button,
+        ...(selectedSidebarTab === SidebarTab.Dashboard
+          ? styles.selected_sidebar_button
+          : {}),
+      }}
+    >
+      Dashboard
+    </Button>,
     <Button
-      onClick={async () =>  {
+      onClick={async () => {
         await Logout();
       }}
       style={{
@@ -54,7 +84,7 @@ function SuperadminView() {
       }}
     >
       Logout
-    </Button>
+    </Button>,
   ];
 
   return (
@@ -64,9 +94,9 @@ function SuperadminView() {
           <div style={styles.sidebar}>
             <img
               style={{
-                width: "70%",
-                height: "auto",
-                borderRadius: "50%",
+                width: '70%',
+                height: 'auto',
+                borderRadius: '50%',
                 marginTop: 77,
               }}
               src={logo}
@@ -75,27 +105,33 @@ function SuperadminView() {
 
             <div style={{ marginTop: 35 }}>{sidebar_buttons}</div>
           </div>
-          <div style={{
-            width: "100%",
-            paddingLeft: 35,
-            paddingRight: 35,
-            overflow: "auto",
-          }}>
-            <div style={{ ...styles.header, ...{ textAlign: "center" } }}>
+          <div
+            style={{
+              width: '100%',
+              paddingLeft: 35,
+              paddingRight: 35,
+              overflow: 'auto',
+            }}
+          >
+            <div style={{ ...styles.header, ...{ textAlign: 'center' } }}>
               KAIN-TA SUPER ADMIN DASHBOARD
             </div>
 
             {selectedSidebarTab === SidebarTab.Verification ? (
               <VerificationPage />
-            ) : (null)}
+            ) : null}
 
             {selectedSidebarTab === SidebarTab.Accounts ? (
               <AccountsPage />
-            ) : (null)}
+            ) : null}
+
+            {selectedSidebarTab === SidebarTab.Payments ? (
+              <PaymentsPage />
+            ) : null}
 
             {selectedSidebarTab === SidebarTab.Dashboard ? (
               <DashboardPage />
-            ) : (null)}
+            ) : null}
           </div>
         </div>
       </div>
@@ -106,45 +142,45 @@ function SuperadminView() {
 const styles = {
   background: {
     backgroundImage: `url(${background})`,
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    width: "100vw",
-    height: "100vh",
-    color: "black",
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    width: '100vw',
+    height: '100vh',
+    color: 'black',
   },
   header: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 36,
   },
   modal: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
   section: {
     marginTop: 5,
   },
   text_input: {
-    width: "100%",
+    width: '100%',
   },
   sidebar: {
-    backgroundColor: "#2673DD",
+    backgroundColor: '#2673DD',
     width: 260,
-    color: "white",
+    color: 'white',
   },
   selected_sidebar_button: {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)'
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   sidebar_button: {
-    width: "100%",
-    color: "white",
-    borderRadius: 20
+    width: '100%',
+    color: 'white',
+    borderRadius: 20,
   },
   tab_button: {
-    width: "100%",
-    color: "black",
+    width: '100%',
+    color: 'black',
   },
 };
 

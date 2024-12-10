@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { UserPayload } from '../models/userModel';
+import { UserModel, UserPayload } from '../models/userModel';
 import {
   EstablishmentForm,
   EstablishmentModel,
@@ -17,6 +17,27 @@ type LoginError = {
 
 const hostURL = import.meta.env.VITE_API_URL;
 // const hostURL = "http://localhost:3000";
+
+export const getAllUsers = async (token: string): Promise<UserModel[]> => {
+  const apiURL = `${hostURL}/api/users/all-users`;
+
+  if (!hostURL)
+    throw new Error('API URL is not defined in the environment variables.');
+
+  const response = await fetch(apiURL, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    const response_error: LoginError = await response.json();
+    throw new Error(response_error.message);
+  }
+  const data: UserModel[] = await response.json();
+
+  return data;
+};
 
 export const loginWithEmail = async (
   email: string,
