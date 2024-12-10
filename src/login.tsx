@@ -6,9 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginWithEmail, loginWithGoogle } from './handlers/APIController';
 import { UserPayload } from './models/userModel';
 import CloseIcon from '@mui/icons-material/Close';
-import {
-  useGoogleLogin,
-} from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 
 function Login() {
   const navigate = useNavigate();
@@ -68,7 +66,6 @@ function Login() {
     },
   });
 
-
   const action = (
     <React.Fragment>
       <IconButton
@@ -93,7 +90,7 @@ function Login() {
       <div style={styles.modal}>
         <div style={{ ...styles.container, ...{ textAlign: 'center' } }}>
           <div style={styles.header}>KAIN-TA</div>
-          <div style={styles.sub_header}>Super Admin Login</div>
+          <div style={styles.sub_header}>Admin & Superadmin Login</div>
           <div style={styles.section}>
             <TextField
               value={email}
