@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
 import './accountsPage.css';
-import { getAllUsers, updatePayment } from '../../handlers/APIController';
+import { getAllUsers } from '../../handlers/APIController';
 import Modal from '../../components/Modal';
 import { UserModel } from '../../models/userModel';
 import { EstablishmentModel } from '../../models/establishmentModel';
@@ -18,6 +18,27 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
     setModalType(type);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      try {
+        setIsLoading(true);
+        const token = sessionStorage.getItem('authToken');
+        if (!token) return;
+
+        const data = await getAllUsers(token);
+        setUsers(data);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.error('Error parsing user:', error);
+      }
+    };
+
+    if (!isLoading) {
+      fetchEstablishment();
+    }
+  });
 
   useEffect(() => {
     if (imageUrl) {
