@@ -1,67 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Button, CircularProgress, MenuItem, FormControl } from '@mui/material';
-import ThumbUp from '@mui/icons-material/ThumbUp';
+import { CircularProgress } from '@mui/material';
 import './accountsPage.css';
-import { ThumbDown } from '@mui/icons-material';
-import {
-  getAllUsers,
-  getPayments,
-  updatePayment,
-} from '../../handlers/APIController';
-import { PaymentModel } from '../../models/paymentModel';
+import { getAllUsers, updatePayment } from '../../handlers/APIController';
 import Modal from '../../components/Modal';
 import { UserModel } from '../../models/userModel';
 import { EstablishmentModel } from '../../models/establishmentModel';
 
 function AccountsPage({ imageUrl }: { imageUrl?: string }) {
-  const [selectedRow, setSelectedRow] = useState<number>(0);
   const [users, setUsers] = useState<UserModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [modalType, setModalType] = useState<string>('');
-  const [filter, setFilter] = useState<string>('ALL');
-
-  const handleReject = async (id: string) => {
-    setIsLoading(true);
-    const data = await updatePayment(id, 'FAILED');
-    console.log(data);
-    setIsLoading(false);
-  };
-
-  const handleApprove = async (id: string) => {
-    setIsLoading(true);
-    const data = await updatePayment(id, 'COMPLETED');
-    console.log(data);
-    setIsLoading(false);
-  };
 
   const handleImageClick = (imageUrl: string, type: string) => {
     setSelectedImage(imageUrl);
     setModalType(type);
     setIsModalOpen(true);
   };
-
-  useEffect(() => {
-    const fetchEstablishment = async () => {
-      try {
-        setIsLoading(true);
-        const token = sessionStorage.getItem('authToken');
-        if (!token) return;
-
-        const data = await getAllUsers(token);
-        setUsers(data);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        console.error('Error parsing user:', error);
-      }
-    };
-
-    if (!isLoading) {
-      fetchEstablishment();
-    }
-  }, [filter]);
 
   useEffect(() => {
     if (imageUrl) {
@@ -97,10 +53,7 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
                 const class_name = rowIndex % 2 === 0 ? 'row odd-row' : 'row';
 
                 return (
-                  <div
-                    className={class_name}
-                    onClick={() => setSelectedRow(rowIndex)}
-                  >
+                  <div className={class_name}>
                     <div>{item.name}</div>
                     <div>{item.type}</div>
                     <div>
