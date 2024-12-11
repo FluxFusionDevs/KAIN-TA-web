@@ -38,7 +38,7 @@ function AccountsPage({ imageUrl }: { imageUrl?: string }) {
     if (!isLoading) {
       fetchEstablishment();
     }
-  });
+  }, []);
 
   useEffect(() => {
     if (imageUrl) {
