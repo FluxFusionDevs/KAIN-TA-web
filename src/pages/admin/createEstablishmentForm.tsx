@@ -98,6 +98,12 @@ function EstablishmentForm() {
     },
   ];
 
+  const documentTypes: string[] = [
+    'BIR',
+    'Business Permit',
+    'SEC Registration',
+  ];
+
   const handleComplete = async () => {
     setIsLoading(true);
     setError('');
@@ -867,16 +873,27 @@ function EstablishmentForm() {
         </LocalizationProvider>
       </div>
       <div className="section">
-        <TextField
-          onChange={(event) => {
-            const cur_data: FormData = { ...form };
-            cur_data.documentName = event.target.value;
-            setForm(cur_data);
-          }}
-          label="Document Type"
-          placeholder="Ex: BIR"
-          variant="standard"
-        />
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label" style={{ color: 'black' }}>
+            Document Type
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label="Document Type"
+            onChange={(event: SelectChangeEvent) => {
+              const cur_data: FormData = { ...form };
+              cur_data.documentName = event.target.value;
+              setForm(cur_data);
+            }}
+          >
+            {documentTypes.map((item, index) => (
+              <MenuItem key={index} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
       <div className="section">
         <Button
