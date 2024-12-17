@@ -1,0 +1,15 @@
+.add-table .row {
+  display: flex;
+  gap: 25px 25px;
+}
+
+.add-table .control {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.add-table .col {
+  flex: 1;
+}

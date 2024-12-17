@@ -102,7 +102,10 @@ const SuperTable: React.FC<SuperTableProps> = ({ data, buttons }) => {
                   ].join(' ')}
                   style={{ flex: 1 }}
                 >
-                  {buttons(item.find((i) => i.type === 'ID')?.value as string, item.find((i) => i.type === 'EMAIL')?.value as string)}  
+                  {buttons(
+                    item.find((i) => i.type === 'ID')?.value as string,
+                    item.find((i) => i.type === 'EMAIL')?.value as string
+                  )}
                 </div>
               ) : null}
             </div>
