@@ -10,7 +10,7 @@ import {
   emptyEstablishmentForm,
   EstablishmentForm as FormData,
 } from '../../models/establishmentModel';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api';
 import Modal from '../../components/Modal';
 
 import './establishmentForm.css';
@@ -28,6 +28,7 @@ function EstablishmentForm() {
   const [locationSelect, setLocationSelect] = useState<boolean>(false);
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries: ['places'],
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [completeModal, setCompleteModal] = useState<boolean>(false);
@@ -38,6 +39,9 @@ function EstablishmentForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [modalType, setModalType] = useState<string>('');
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const autocompleteRef = useRef(null);
+
 
   const handleImageClick = (imageUrl: string, type: string) => {
     setSelectedImage(imageUrl);
@@ -177,55 +181,110 @@ function EstablishmentForm() {
   };
 
   console.log(form.jsonData.location.coordinates.length);
-
+  
   const mapComponent = () => {
-    if (!isLoaded) return <div>Loading...</div>;
 
-    return (
-      <GoogleMap
-        onClick={(event) => {
-          const latLng = event.latLng;
-          if (latLng) {
-            const lat = latLng.lat();
-            const lng = latLng.lng();
-            const cur_data: FormData = { ...form };
-            cur_data.jsonData.location = {
-              type: 'Point',
-              coordinates: [lng, lat],
-            };
-
-            setForm(cur_data);
-          }
-        }}
-        mapContainerStyle={{
-          width: 600,
-          height: 300,
-        }}
-        center={
-          form.jsonData.location.coordinates.length < 2
-            ? {
-                lat: 14.587490287067382,
-                lng: 121.11284059177764,
-              }
-            : {
-                lat: form.jsonData.location.coordinates[1],
-                lng: form.jsonData.location.coordinates[0],
-              }
+    const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+      setAutocomplete(autocompleteInstance);
+    };
+  
+    const onPlaceChanged = () => {
+      if (autocomplete !== null) {
+        const place = autocomplete.getPlace();
+        if (place.geometry && place.geometry.location) {
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          const cur_data: FormData = { ...form };
+          cur_data.jsonData.location = {
+            type: 'Point',
+            coordinates: [lng, lat],
+          };
+          console.log(place);
+          cur_data.jsonData.address = place.formatted_address ?? '';
+          setForm(cur_data);
         }
-        zoom={15}
-        options={{
-          disableDefaultUI: true,
-        }}
-      >
-        {form.jsonData.location.coordinates.length > 1 && (
-          <Marker
-            position={{
-              lat: form.jsonData.location.coordinates[1],
-              lng: form.jsonData.location.coordinates[0],
+      }
+    };
+
+    const handleMapClick = (latLng: google.maps.LatLng) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ location: latLng }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const address = results[0].formatted_address;
+          const lat = latLng.lat();
+          const lng = latLng.lng();
+          const cur_data: FormData = { ...form };
+          cur_data.jsonData.location = {
+            type: 'Point',
+            coordinates: [lng, lat],
+          };
+          cur_data.jsonData.address = address;
+          setForm(cur_data);
+        } else {
+          console.error('Geocoder failed due to: ' + status);
+        }
+      });
+    };
+  
+    if (!isLoaded) return <div>Loading...</div>;
+  
+    return (
+      <div>
+        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+        <TextField
+          placeholder="Search for a location"
+          inputRef={autocompleteRef}
+          variant="outlined"
+          className="autocomplete-input"
+          sx={{ marginBottom: 2, width: '100%' }}
+          
+        />
+      </Autocomplete>
+          <GoogleMap
+            onClick={(event) => {
+              const latLng = event.latLng;
+              if (latLng) {
+                const lat = latLng.lat();
+                const lng = latLng.lng();
+                const cur_data: FormData = { ...form };
+                cur_data.jsonData.location = {
+                  type: 'Point',
+                  coordinates: [lng, lat],
+                };
+                handleMapClick(latLng);
+                setForm(cur_data);
+              }
             }}
-          />
-        )}
-      </GoogleMap>
+            mapContainerStyle={{
+              width: 600,
+              height: 300,
+            }}
+            center={
+              form.jsonData.location.coordinates.length < 2
+                ? {
+                    lat: 14.587490287067382,
+                    lng: 121.11284059177764,
+                  }
+                : {
+                    lat: form.jsonData.location.coordinates[1],
+                    lng: form.jsonData.location.coordinates[0],
+                  }
+            }
+            zoom={15}
+            options={{
+              disableDefaultUI: true,
+            }}
+          >
+            {form.jsonData.location.coordinates.length > 1 && (
+              <Marker
+                position={{
+                  lat: form.jsonData.location.coordinates[1],
+                  lng: form.jsonData.location.coordinates[0],
+                }}
+              />
+            )}
+          </GoogleMap>
+          </div>
     );
   };
 
@@ -269,7 +328,6 @@ function EstablishmentForm() {
             setLocationSelect(false);
           }}
           content={mapComponent()}
-          contentStyle={{ display: 'block', padding: 25 }}
         />
       )}
 
@@ -370,6 +428,7 @@ function EstablishmentForm() {
             cur_data.jsonData.address = event.target.value;
             setForm(cur_data);
           }}
+          value={form.jsonData.address}
           label="Address"
           variant="standard"
         />
