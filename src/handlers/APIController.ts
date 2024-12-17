@@ -315,7 +315,6 @@ export const updatePayment = async (
   return data;
 };
 
-
 export const updateEstablishmentStatus = async (
   _id: string,
   status: EstablishmentStatus,
@@ -341,7 +340,7 @@ export const updateEstablishmentStatus = async (
   const emailPayload = {
     subject: 'KAINTA - Establishment Status Update',
     message: `Your establishment has been ${status.toLowerCase()}`,
-    email: email
+    email: email,
   };
 
   const emailResponse = await fetch(emailURL, {
@@ -417,6 +416,35 @@ export const validateToken = async (): Promise<void> => {
     }
     throw new Error('An unexpected error occurred during token validation');
   }
+};
+
+export const deleteRating = async (
+  rating_id: string,
+  establishment_id: string
+): Promise<EstablishmentModel> => {
+  const apiURL = `${hostURL}/api/ratings/delete-rating`;
+
+  if (!hostURL)
+    throw new Error('API URL is not defined in the environment variables.');
+
+  const response = await fetchWrapper(apiURL, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      _id: rating_id,
+      establishmentId: establishment_id,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data: EstablishmentModel = await response.json();
+
+  return data;
 };
 
 export const Logout = async () => {

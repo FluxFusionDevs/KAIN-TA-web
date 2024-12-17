@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import './feedbackView.css';
 import { EstablishmentModel } from '../../models/establishmentModel';
-import { getEstablishment } from '../../handlers/APIController';
+import { deleteRating, getEstablishment } from '../../handlers/APIController';
 import { UserModel } from '../../models/userModel';
 import { Button } from '@mui/material';
 import { Delete } from '@mui/icons-material';
@@ -72,7 +72,13 @@ function FeedbackView() {
     fetchEstablishment();
   }, []);
 
-  async function handleDelete(id: string) {}
+  async function handleDelete(id: string) {
+    if (!establishment) return;
+
+    const res = await deleteRating(id, establishment._id);
+
+    setEstablishment(res);
+  }
 
   return (
     <div className="wrapper">
