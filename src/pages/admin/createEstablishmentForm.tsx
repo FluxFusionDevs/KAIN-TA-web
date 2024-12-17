@@ -5,21 +5,31 @@ import {
   InputLabel,
   TextField,
 } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   emptyEstablishmentForm,
   EstablishmentForm as FormData,
+  OperatingHours,
 } from '../../models/establishmentModel';
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import Modal from '../../components/Modal';
 
 import './establishmentForm.css';
-import { Check, Image, MapSharp } from '@mui/icons-material';
+import './createEstablishmentForm.css';
+import { Check, Image, MapSharp, OtherHouses } from '@mui/icons-material';
 import { createEstablishment } from '../../handlers/APIController';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { UserModel } from '../../models/userModel';
 import { useNavigate } from 'react-router-dom';
+
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { Dayjs } from 'dayjs';
 
 function EstablishmentForm() {
   const navigate = useNavigate();
@@ -38,6 +48,7 @@ function EstablishmentForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [modalType, setModalType] = useState<string>('');
+  const [operatingHours, setOperatingHours] = useState<OperatingHours[]>([]);
 
   const handleImageClick = (imageUrl: string, type: string) => {
     setSelectedImage(imageUrl);
@@ -91,6 +102,21 @@ function EstablishmentForm() {
     setIsLoading(true);
     setError('');
     console.log(form);
+
+    for (let i = 0; i < operatingHours.length; i++) {
+      const item = operatingHours[i];
+      if (item.open === '') {
+        setIsLoading(false);
+        setError(`'Open' Field for ${item.day} is Required`);
+        return;
+      }
+
+      if (item.close === '') {
+        setIsLoading(false);
+        setError(`'Close' Field for ${item.day} is Required`);
+        return;
+      }
+    }
 
     if (form.jsonData.name === '') {
       setIsLoading(false);
@@ -228,6 +254,49 @@ function EstablishmentForm() {
       </GoogleMap>
     );
   };
+
+  const handleTimeChange = (
+    time: string | undefined,
+    day: string,
+    open: boolean
+  ) => {
+    if (!time) return;
+
+    const day_obj: OperatingHours | undefined = operatingHours.find(
+      (op) => op.day === day
+    );
+    if (!day_obj) return;
+
+    // Remove old and replace
+    const copy = operatingHours.filter((op) => op.day !== day);
+
+    if (open) {
+      copy.push({
+        ...day_obj,
+        open: time,
+      });
+    } else {
+      copy.push({
+        ...day_obj,
+        close: time,
+      });
+    }
+
+    setOperatingHours(copy);
+    console.log(operatingHours);
+  };
+
+  useEffect(() => {
+    setForm({
+      ...form,
+      jsonData: {
+        ...form.jsonData,
+        operating_hours: operatingHours
+          .map((entry) => `${entry.day}, ${entry.open} - ${entry.close}`)
+          .join(';'),
+      },
+    });
+  }, [operatingHours]);
 
   return (
     <div className="from-wrapper">
@@ -387,16 +456,415 @@ function EstablishmentForm() {
         />
       </div>
       <div className="section">
-        <TextField
-          onChange={(event) => {
-            const cur_data: FormData = { ...form };
-            cur_data.jsonData.operating_hours = event.target.value;
-            setForm(cur_data);
-          }}
-          label="Operating Hours"
-          placeholder="Ex: Monday-Sunday: 10:00 AM - 10:00 PM"
-          variant="standard"
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div className="column">
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Monday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Monday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Monday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Monday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Monday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Monday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Tuesday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Tuesday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Tuesday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Tuesday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Tuesday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Tuesday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Wednesday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Wednesday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Wednesday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Wednesday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Wednesday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Wednesday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Thursday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Thursday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Thursday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Thursday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Thursday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Thursday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Friday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Friday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Friday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Friday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Friday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Friday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Saturday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Saturday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Saturday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Saturday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Saturday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Saturday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="row">
+              <FormControlLabel
+                style={{ flex: 1 }}
+                label="Sunday"
+                control={
+                  <Checkbox
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      let copy = [...operatingHours];
+                      if (event.target.checked) {
+                        // Add
+                        copy.push({
+                          day: 'Sunday',
+                          open: '',
+                          close: '',
+                        });
+                      } else {
+                        // Remove
+                        copy = copy.filter((op) => op.day !== 'Sunday');
+                      }
+
+                      setOperatingHours(copy);
+                    }}
+                  />
+                }
+              />
+              {operatingHours.find((op) => op.day === 'Sunday') && (
+                <div style={{ display: 'flex' }}>
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Sunday',
+                          true
+                        )
+                      }
+                      label="Open"
+                    />
+                  </DemoContainer>
+
+                  <div className="space"></div>
+
+                  <DemoContainer components={['TimePicker']}>
+                    <TimePicker
+                      onChange={(value) =>
+                        handleTimeChange(
+                          value?.format('hh:mm A'),
+                          'Sunday',
+                          false
+                        )
+                      }
+                      label="Close"
+                    />
+                  </DemoContainer>
+                </div>
+              )}
+            </div>
+          </div>
+        </LocalizationProvider>
       </div>
       <div className="section">
         <TextField

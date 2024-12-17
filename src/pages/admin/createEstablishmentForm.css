@@ -1,0 +1,14 @@
+.from-wrapper .row {
+  display: flex;
+  width: 100%;
+}
+
+.from-wrapper .column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.from-wrapper .space {
+  width: 20px;
+}
