@@ -4,11 +4,14 @@ import './feedbackView.css';
 import { EstablishmentModel } from '../../models/establishmentModel';
 import { getEstablishment } from '../../handlers/APIController';
 import { UserModel } from '../../models/userModel';
+import { Button } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 import SuperTable, { CellType, SuperCell } from '../../components/SuperTable';
 
 function FeedbackView() {
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
   const [tableData, setTableData] = useState<SuperCell[][]>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Set table data
@@ -17,6 +20,7 @@ function FeedbackView() {
       { type: 'HEADER', value: 'User ID' },
       { type: 'HEADER', value: 'Comment' },
       { type: 'HEADER', value: 'Rating' },
+      { type: 'HEADER', value: 'Actions' },
     ];
 
     if (establishment !== undefined) {
@@ -68,9 +72,27 @@ function FeedbackView() {
     fetchEstablishment();
   }, []);
 
+  async function handleDelete(id: string) {}
+
   return (
     <div className="wrapper">
-      <SuperTable data={tableData ?? []} />
+      <SuperTable
+        buttons={(id) => [
+          <Button
+            sx={{
+              backgroundColor: '#dc3545',
+            }}
+            disabled={isLoading}
+            onClick={() => handleDelete(id)}
+            className="button"
+            variant="contained"
+            startIcon={<Delete />}
+          >
+            Delete
+          </Button>,
+        ]}
+        data={tableData ?? []}
+      />
     </div>
   );
 }
