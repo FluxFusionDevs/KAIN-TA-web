@@ -16,7 +16,7 @@ import Modal from '../../components/Modal';
 
 import './establishmentForm.css';
 import './createEstablishmentForm.css';
-import { Check, Image, MapSharp, OtherHouses } from '@mui/icons-material';
+import { Check, Image, MapSharp } from '@mui/icons-material';
 import { createEstablishment } from '../../handlers/APIController';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -29,7 +29,6 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Dayjs } from 'dayjs';
 
 function EstablishmentForm() {
   const navigate = useNavigate();
