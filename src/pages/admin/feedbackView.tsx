@@ -11,7 +11,7 @@ import SuperTable, { CellType, SuperCell } from '../../components/SuperTable';
 function FeedbackView() {
   const [establishment, setEstablishment] = useState<EstablishmentModel>();
   const [tableData, setTableData] = useState<SuperCell[][]>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Set table data
