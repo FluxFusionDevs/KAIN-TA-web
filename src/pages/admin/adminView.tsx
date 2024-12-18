@@ -109,7 +109,7 @@ function AdminView() {
                   src={logo}
                   alt=""
                 />
-
+                <div style={styles.header2}>{establishment.name}</div>
                 <div style={{ marginTop: 35 }}>{sidebar_buttons}</div>
               </div>
             )}
@@ -166,6 +166,14 @@ const styles = {
   header: {
     fontWeight: 'bold',
     fontSize: 36,
+  },
+  header2: {
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
+  header3: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modal: {
     display: 'flex',
