@@ -85,19 +85,19 @@ function EstablishmentForm() {
   ) => {
     setOtherCuisine(event.target.value);
     const cur_data: FormData = { ...form };
-  
+
     if (event.target.value) {
       // Split by comma and trim whitespace
       const customCuisines = event.target.value
         .split(',')
-        .map(cuisine => cuisine.trim())
-        .filter(cuisine => cuisine !== '');
-        
+        .map((cuisine) => cuisine.trim())
+        .filter((cuisine) => cuisine !== '');
+
       cur_data.jsonData.quisines = customCuisines;
     } else {
       cur_data.jsonData.quisines = [];
     }
-  
+
     setForm(cur_data);
   };
 
@@ -549,8 +549,14 @@ function EstablishmentForm() {
       </div>
       <div
         className="section"
-        style={{ display: 'flex', justifyContent: 'center' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'start',
+        }}
       >
+        <h4 className='label'>Cuisines</h4>
+
         <FormGroup sx={{ flexDirection: 'row' }}>
           {cuisineOptions.map((cuisine) => (
             <FormControlLabel
@@ -594,13 +600,15 @@ function EstablishmentForm() {
             <TextField
               value={otherCuisine}
               onChange={handleOtherCuisineChange}
-              label="Other Cuisine"
-              placeholder="Specify other cuisine"
+              label="Other Cuisine e.g. Japanese, Korean"
               variant="standard"
+             
             />
           )}
         </FormGroup>
       </div>
+      <h4 className='label'>Operating hours</h4>
+
       <div className="section">
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div className="column">
